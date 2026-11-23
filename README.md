@@ -255,23 +255,34 @@ These counts report **internal working classifications**, **not 122 verified exa
 
 ## Current application and installation
 
-The working **Windows package V3.4** combines a browser-based HTML/JavaScript calendar, an event-data file, and an optional PowerShell notification-area utility.
+The working **Windows package V3.6** lives in the [`Bur_Sagale_Takvimi/`](Bur_Sagale_Takvimi/) folder. It combines a browser-based HTML/JavaScript calendar, an event-data file, and an optional PowerShell notification-area utility. The interface is currently in Turkish.
 
 **Current features:**
 
-- System A monthly view, with System B optionally enabled under advanced settings.
+- System A monthly view, with System B optionally enabled under settings.
+- A timeline ribbon from 763 BCE to today showing every catalog event; click an event or a year to jump there.
 - Date conversion among System A, System B, Julian, Gregorian, and JDN representations.
 - Source-linked event search, filters, and event details.
 - Personal notes stored locally in the browser, with JSON backup/import.
 - Event-entry form with calculated preview and draft records; export a replacement `olaylar.js` to persist edits in the application files.
 - Optional Windows notification-area icon, calendar shortcut, and historical-anniversary notifications.
 
-**Windows quick start (for the V3.4 distribution):**
+**Files:**
 
-1. Download the source/distribution files from a trusted project release once published. **Do not download or execute unknown builds.**
-2. Extract the `Tarihsel_Takvim` directory into a permanent location.
+| File | Role |
+|---|---|
+| `Bur_Sagale_Takvimi.html` | The calendar application (works offline in any modern browser) |
+| `olaylar.js` | The event catalog and source list; the only place event data is stored |
+| `bur_sagale_simgesi.ps1` | Optional Windows notification-area icon and shortcut installer |
+| `Kur.cmd` / `Kaldir.cmd` | Install / remove the shortcuts created by the icon utility |
+| `KULLANIM.txt` | Turkish user guide |
+
+**Windows quick start (V3.6):**
+
+1. Download this repository (**Code → Download ZIP**) from the official repository only. **Do not download or execute unknown builds.**
+2. Extract the `Bur_Sagale_Takvimi` folder into a permanent location.
 3. Review the scripts if desired, then run `Kur.cmd` on Windows to install shortcuts and start the optional notification-area utility.
-4. Click the notification-area icon to open the calendar in an Edge application window, or open `Tarihsel_Takvim.html` directly in a browser.
+4. Click the notification-area icon to open the calendar in an Edge application window, or open `Bur_Sagale_Takvimi.html` directly in a browser.
 5. Personal notes stay in browser storage: **export a JSON backup** if you rely on them. New event drafts are exported by generating a new `olaylar.js` file; the app does not automatically overwrite arbitrary files on your computer.
 
 **Limitations:** The project is an **in-development prototype**; Windows tray behavior, permissions, and deployment should be tested on a real Windows system before a stable release is advertised. Installation must **not** alter Windows' system date, clock, or regional calendar settings. GitHub Pages or cross-platform packaging may be added after the source layout and deployment process are verified.
@@ -330,6 +341,6 @@ All linked material remains subject to its **own copyright and reuse terms**. A 
 
 - **Code:** The intended license is the **MIT License**. The repository should include a `LICENSE` file containing that license before the code is distributed as MIT-licensed. Third-party code/assets must be checked before inclusion.
 - **Original research descriptions and curated data:** Licensing is **to be finalized separately** (CC BY 4.0 is under consideration where rights permit). Historical facts are not themselves copyrighted; modern editorial text and database arrangements may have distinct rights.
-- **Status:** **Open-source development / research prototype**. The V3.4 catalog, software, and documentation should not be represented as a peer-reviewed exhaustive chronology or an official international calendar standard.
+- **Status:** **Open-source development / research prototype**. The V3.6 catalog, software, and documentation should not be represented as a peer-reviewed exhaustive chronology or an official international calendar standard.
 
 **We are not trying to rewrite history. We are trying to make more of humanity's recorded history visible within the calendar we use every day.**

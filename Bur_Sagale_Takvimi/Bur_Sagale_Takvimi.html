@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bur Sagale Takvimi</title>
+<meta name="application-name" content="Bur Sagale Takvimi">
+<style>
+:root{
+ --bg:#F2F3F0;--surface:#FFFFFF;--ink:#1A2230;--muted:#5B6676;--faint:#8D96A3;--line:#DADDD6;--line-2:#E8EAE5;
+ --lapis:#1E3A6E;--lapis-2:#2B4C8A;--lapis-deep:#152B54;--lapis-wash:#E6EBF4;
+ --gold:#B8913A;--gold-ink:#7E6122;--gold-wash:#F5EEDC;
+ --ga:#2F7D6B;--gb:#A8741C;--gc:#A4493D;
+ --f-ui:"Bahnschrift","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+ --f-read:"Sitka Text","Sitka","Cambria","Georgia",serif;
+ --f-disp:"Sitka Display","Sitka Heading","Sitka Text","Cambria","Georgia",serif;
+ --bar-h:56px;--rib-h:64px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font:14px/1.45 var(--f-ui);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--lapis-2);outline-offset:2px}
+[hidden]{display:none!important}
+.noB .bonly{display:none!important}
+
+/* ---------- üst çubuk ---------- */
+.bar{height:var(--bar-h);flex:none;display:flex;align-items:center;gap:28px;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{font:600 14px/1 var(--f-ui);color:var(--lapis);white-space:nowrap;padding-right:20px;border-right:1px solid var(--line);align-self:center}
+.bar-today{display:flex;align-items:baseline;gap:10px;min-width:0;white-space:nowrap}
+.bar-date{font:600 19px/1 var(--f-ui);letter-spacing:.2px}
+.bar-day{color:var(--muted)}
+.tabs{display:flex;gap:2px;height:100%}
+.tabs button{border:0;background:none;padding:0 14px;height:100%;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--lapis);font-weight:600}
+.bar-actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);padding:7px 14px;border-radius:6px}
+.btn:hover{border-color:#bfc4bb}
+.btn.primary{background:var(--lapis);border-color:var(--lapis);color:#fff}
+.btn.primary:hover{background:var(--lapis-2)}
+.btn:disabled{opacity:.45;cursor:default}
+.pill{border:1px solid #e3d3a6;background:var(--gold-wash);color:var(--gold-ink);padding:6px 12px;border-radius:999px;font-size:13px}
+.link{border:0;background:none;color:var(--lapis-2);padding:0;text-decoration:underline;text-underline-offset:3px}
+.alert{margin:12px 20px 0;padding:10px 14px;border-left:3px solid var(--gc);background:#F8E9E6;color:#6E2D25;border-radius:4px;font-size:13px}
+.alert ul{margin:6px 0 0 18px;padding:0}
+
+/* ---------- zaman çizgisi şeridi ---------- */
+.ribbon{height:var(--rib-h);flex:none;background:var(--lapis-deep);color:#C9D4E8;position:relative;user-select:none}
+.ribbon svg{display:block;width:100%;height:100%;cursor:crosshair}
+.ribbon .r-axis{stroke:#3D5786;stroke-width:1}
+.ribbon .r-tick{stroke:#9FB2D3;stroke-width:1.2}
+.ribbon .r-tick.a{stroke:#F2F5FA}
+.ribbon .r-tick.draft{stroke:var(--gold)}
+.ribbon .r-hit{fill:transparent;cursor:pointer}
+.ribbon .r-hit:hover+.r-tick,.ribbon .r-tick.hot{stroke:var(--gold);stroke-width:2}
+.ribbon .r-lab{fill:#8EA2C6;font:11px var(--f-ui)}
+.ribbon .r-cap{fill:#C9D4E8;font:12px var(--f-ui)}
+.ribbon .r-today{stroke:var(--gold);stroke-width:2}
+.ribbon .r-todaylab{fill:var(--gold);font:600 12px var(--f-ui)}
+.ribbon .r-sel{stroke:#fff;stroke-width:1;stroke-dasharray:2 2}
+.ribbon .r-sellab{fill:#fff;font:12px var(--f-ui)}
+.ribbon .r-hover{stroke:#fff;stroke-opacity:.5;stroke-width:1}
+.ribbon .r-hoverlab{fill:#fff;font:12px var(--f-ui)}
+
+/* ---------- görünümler ---------- */
+main{flex:1;min-height:0;display:flex}
+.view{flex:1;min-width:0;min-height:0}
+.scroll{overflow:auto;padding:24px 28px 40px}
+.narrow{max-width:1080px;margin:0 auto}
+
+/* ---------- takvim ---------- */
+.cal-view{display:grid;grid-template-columns:minmax(0,1fr) 390px}
+.month{display:flex;flex-direction:column;min-height:0;padding:18px 20px 16px}
+.month-head{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.month-head h1{font:600 26px/1.1 var(--f-ui);margin:0;letter-spacing:.2px}
+.month-sub{color:var(--muted);font-size:13px}
+.month-nav{margin-left:auto;display:flex;gap:6px}
+.iconbtn{width:34px;height:34px;border:1px solid var(--line);background:var(--surface);border-radius:6px;font-size:18px;line-height:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:6px 12px;color:var(--muted)}
+.seg button.on{background:var(--lapis);color:#fff}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));color:var(--muted);font-size:12px;padding:0 0 6px}
+.wk div{padding-left:10px}
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:minmax(64px,1fr);gap:1px;background:var(--line-2);border:1px solid var(--line-2)}
+.cell{position:relative;background:var(--surface);border:0;padding:8px 10px;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:0;overflow:hidden}
+.cell:hover{background:#FAFBF9}
+.cell.out{background:var(--bg);cursor:default}
+.cell .num{font:500 15px/1 var(--f-ui);width:26px;height:26px;display:inline-grid;place-items:center;margin:-4px 0 0 -6px;border-radius:50%}
+.cell.today .num{background:var(--lapis);color:#fff}
+.cell.sel{box-shadow:inset 0 0 0 2px var(--lapis)}
+.cell .ev-line{font:12px/1.3 var(--f-read);color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding-left:7px;border-left:2px solid var(--ga)}
+.cell .ev-line.b{border-left-color:var(--gb)}
+.cell .ev-line.draft{border-left-style:dashed;border-left-color:var(--gold)}
+.cell .an-line{font:italic 11.5px/1.3 var(--f-read);color:var(--gold-ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cell .more{font-size:11px;color:var(--muted)}
+.cell .note-dot{position:absolute;top:9px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--lapis-2)}
+.cell.wkend .num{color:var(--muted)}
+.cell.today.wkend .num{color:#fff}
+
+/* ---------- gün paneli ---------- */
+.day{background:var(--surface);border-left:1px solid var(--line);overflow:auto;padding:22px 22px 30px}
+.day h2{font:400 30px/1.1 var(--f-disp);margin:0}
+.day-wd{color:var(--muted);margin:4px 0 14px}
+.eq{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0 0 6px;font-size:13px}
+.eq dt{color:var(--muted)}
+.eq dd{margin:0}
+.day-sec{border-top:1px solid var(--line-2);margin-top:16px;padding-top:14px}
+.day-sec h3{font:600 14px/1.2 var(--f-ui);margin:0 0 8px}
+.day-sec.anniv h3{color:var(--gold-ink)}
+.empty{color:var(--muted);font-size:13px;margin:0 0 8px}
+.ev{padding:8px 0 10px}
+.ev+.ev{border-top:1px dashed var(--line-2)}
+.ev-head{display:flex;gap:8px;align-items:flex-start}
+.ev h4{font:600 15px/1.3 var(--f-read);margin:0;flex:1}
+.grade{flex:none;font:600 11px/1 var(--f-ui);padding:4px 6px;border-radius:4px;border:1px solid currentColor}
+.grade.a{color:var(--ga)}.grade.b{color:var(--gb)}.grade.c{color:var(--gc)}
+.draft-tag{flex:none;font-size:11px;color:var(--gold-ink);background:var(--gold-wash);padding:3px 6px;border-radius:4px}
+.ev-when{color:var(--muted);font-size:12.5px;margin:3px 0 0}
+.ev-note{font:13.5px/1.55 var(--f-read);margin:6px 0 0;color:#2C3644}
+.ev details{margin-top:6px;font-size:12.5px}
+.ev summary{color:var(--lapis-2);cursor:pointer;width:max-content}
+.ev details dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:8px 0 4px}
+.ev details dt{color:var(--muted)}
+.ev details dd{margin:0}
+.ev .srcs a{color:var(--lapis-2);display:block;margin-top:2px}
+textarea.control{min-height:86px;resize:vertical;font:13.5px/1.5 var(--f-read)}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.status{font-size:12px;color:var(--muted)}
+
+/* ---------- formlar ---------- */
+.control{width:100%;min-width:0;border:1px solid #CDD1CA;background:var(--surface);padding:8px 10px;border-radius:6px}
+.control:focus{border-color:var(--lapis-2)}
+label.l{display:block;font-size:12.5px;color:var(--muted);margin:0 0 4px}
+.fgrid{display:grid;gap:12px}
+.f2{grid-template-columns:1fr 1fr}.f3{grid-template-columns:repeat(3,1fr)}.f4{grid-template-columns:repeat(4,1fr)}
+.hint{font-size:12px;color:var(--muted);margin:5px 0 0}
+.preview{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--lapis-wash);font-size:13px}
+.preview.err{background:#F8E9E6;color:#6E2D25}
+.note{margin-top:12px;padding:10px 12px;border-left:3px solid var(--gold);background:var(--gold-wash);color:#5E4818;font-size:13px;border-radius:0 6px 6px 0}
+
+/* ---------- katalog ---------- */
+.page-h{font:600 22px/1.2 var(--f-ui);margin:0 0 4px}
+.page-p{color:var(--muted);margin:0 0 18px;max-width:72ch}
+.filters{display:grid;grid-template-columns:minmax(220px,2fr) repeat(3,minmax(140px,1fr)) auto;gap:8px;margin-bottom:12px}
+.tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:600;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
+td{padding:9px 12px;border-bottom:1px solid var(--line-2);vertical-align:top}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:#F7F8F5}
+td .t{font:14px/1.35 var(--f-read)}
+td small{display:block;color:var(--muted);margin-top:2px}
+.count{color:var(--muted);font-size:12.5px;margin-top:10px}
+
+/* ---------- dönüştürücü ---------- */
+.conv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:22px}
+.res{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:0;font-size:14px}
+.res dt{color:var(--muted)}
+.res dd{margin:0;font-weight:600}
+.res dd.big{font:400 26px/1.1 var(--f-disp)}
+
+/* ---------- yöntem ---------- */
+.two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px;align-items:start}
+.prose{font:15px/1.65 var(--f-read);max-width:68ch}
+.prose h3{font:600 16px/1.3 var(--f-ui);margin:22px 0 6px}
+.prose h3:first-child{margin-top:0}
+.prose p{margin:0 0 10px}
+.gl{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:start;font-size:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+.box+.box{margin-top:16px}
+.box h3{font:600 15px/1.3 var(--f-ui);margin:0 0 10px}
+.check{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
+.srclist{font-size:13px;max-height:420px;overflow:auto}
+.srclist a{display:block;color:var(--lapis-2);padding:4px 0;border-bottom:1px solid var(--line-2);text-decoration:none}
+.srclist a:hover{text-decoration:underline}
+.srclist b{display:inline-block;min-width:36px;color:var(--ink)}
+
+/* ---------- çekmece ---------- */
+.scrim{position:fixed;inset:0;background:rgba(21,43,84,.28)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100vw);background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease;z-index:5;visibility:hidden}
+.drawer.open{transform:none;visibility:visible}
+.dr-head{display:flex;align-items:center;gap:12px;padding:16px 20px 0}
+.dr-head h2{font:600 18px/1.2 var(--f-ui);margin:0}
+.dr-head .iconbtn{margin-left:auto}
+.dr-tabs{display:flex;gap:2px;padding:0 20px;border-bottom:1px solid var(--line);margin-top:10px}
+.dr-tabs button{border:0;background:none;padding:10px 12px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.dr-tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--lapis);font-weight:600}
+.dr-body{flex:1;overflow:auto;padding:18px 20px}
+fieldset{border:0;padding:0;margin:0 0 22px}
+legend{font:600 14px/1.2 var(--f-ui);padding:0;margin-bottom:10px}
+.radio{display:flex;gap:8px;align-items:center;margin:6px 0;font-size:13.5px}
+.dr-foot{border-top:1px solid var(--line);padding:12px 20px;display:flex;gap:8px;justify-content:flex-end}
+.draft-item{padding:10px 0;border-bottom:1px solid var(--line-2)}
+.draft-item h4{font:600 14.5px/1.3 var(--f-read);margin:0}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;max-width:min(640px,90vw);z-index:9}
+
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+@media (max-width:1150px){.brand{padding-right:14px}.cal-view{grid-template-columns:minmax(0,1fr) 330px}.bar{gap:16px}.tabs button{padding:0 10px}}
+@media (max-width:900px){
+ main{overflow:auto}.cal-view{grid-template-columns:1fr;grid-auto-rows:auto}.month{min-height:560px}.day{border-left:0;border-top:1px solid var(--line)}
+ .bar{flex-wrap:wrap;height:auto;padding:8px 14px;gap:8px}.tabs{order:3;width:100%;height:40px;overflow-x:auto}
+ .filters{grid-template-columns:1fr 1fr}.conv,.two{grid-template-columns:1fr}.f4{grid-template-columns:1fr 1fr}
+}
+@media print{
+ .bar,.ribbon,.day,.drawer,.scrim,.toast,.month-nav,.seg,#dataError{display:none!important}
+ body{display:block;height:auto;background:#fff}main{display:block}.cal-view{display:block}.grid{grid-auto-rows:110px}
+}
+</style></head>
+<body class="noB">
+<header class="bar">
+ <span class="brand" lang="tr">Bur Sagale Takvimi</span>
+ <div class="bar-today" title="Bugün, Sistem A"><span id="barDate" class="bar-date">—</span><span id="barDay" class="bar-day"></span></div>
+ <nav class="tabs" role="tablist" aria-label="Bölümler">
+  <button role="tab" data-view="takvim" aria-selected="true">Takvim</button>
+  <button role="tab" data-view="katalog" aria-selected="false">Katalog</button>
+  <button role="tab" data-view="donustur" aria-selected="false">Dönüştürücü</button>
+  <button role="tab" data-view="yontem" aria-selected="false">Yöntem ve ayarlar</button>
+ </nav>
+ <div class="bar-actions"><button id="draftPill" class="pill" hidden></button><button id="openAdd" class="btn primary">Olay ekle</button></div>
+</header>
+<div id="dataError" class="alert" role="alert" hidden></div>
+<section class="ribbon" aria-label="MÖ 763'ten bugüne zaman çizgisi; tıklayınca o yıla gider"><svg id="ribbon" role="img"></svg></section>
+
+<main>
+ <!-- TAKVİM -->
+ <section id="view-takvim" class="view cal-view">
+  <div class="month">
+   <div class="month-head">
+    <div><h1 id="monthTitle">—</h1><div id="monthSub" class="month-sub"></div></div>
+    <div class="month-nav">
+     <div id="modeSwitch" class="seg bonly" title="Sistem A / Sistem B görünümü"><button data-mode="A" class="on">A</button><button data-mode="B">B</button></div>
+     <button class="iconbtn" id="prev" aria-label="Önceki ay" title="Önceki ay (PageUp)">‹</button>
+     <button class="btn" id="jumpToday" title="Bugüne dön (T)">Bugün</button>
+     <button class="iconbtn" id="next" aria-label="Sonraki ay" title="Sonraki ay (PageDown)">›</button>
+    </div>
+   </div>
+   <div id="weekdayHeader" class="wk"></div>
+   <div id="dayGrid" class="grid"></div>
+  </div>
+  <aside class="day" aria-live="polite">
+   <h2 id="dTitle">—</h2>
+   <p id="dWeekday" class="day-wd"></p>
+   <dl id="dEq" class="eq"></dl>
+   <div class="day-sec"><h3>Bu günde</h3><div id="dayEvents"></div><button class="link" id="addForDay">Bu güne olay ekle</button></div>
+   <div class="day-sec anniv" id="annivSec"><h3>Tarihte bu gün</h3><div id="annivEvents"></div></div>
+   <div class="day-sec"><h3><label for="personalNote">Notun</label></h3>
+    <textarea id="personalNote" class="control" placeholder="Bu güne ait bir not; yalnızca bu bilgisayarda saklanır."></textarea>
+    <div class="row"><button class="btn" id="saveNote">Notu kaydet</button><button class="btn" id="deleteNote">Notu sil</button><span id="noteStatus" class="status"></span></div>
+   </div>
+  </aside>
+ </section>
+
+ <!-- KATALOG -->
+ <section id="view-katalog" class="view scroll" hidden>
+  <div class="narrow">
+   <h1 class="page-h">Katalog</h1>
+   <p class="page-p">Takvimdeki bütün kayıtlar. Bir satıra tıklayınca takvim o güne gider. C sınıfı kayıtlar tartışmalıdır ve ay görünümünde gösterilmez.</p>
+   <div class="filters">
+    <input id="searchEvents" class="control" type="search" placeholder="Olay, tarih ya da bölge ara" aria-label="Ara">
+    <select id="gradeFilter" class="control" aria-label="Güven sınıfı"><option value="strong">A ve B sınıfı</option><option value="A">Yalnız A</option><option value="B">Yalnız B</option><option value="C">Yalnız C</option><option value="draft">Taslaklar</option><option value="all">Tümü</option></select>
+    <select id="regionFilter" class="control" aria-label="Bölge"><option value="all">Bütün bölgeler</option></select>
+    <select id="categoryFilter" class="control" aria-label="Tür"><option value="all">Bütün türler</option></select>
+    <button id="downloadCSV" class="btn">CSV indir</button>
+   </div>
+   <div class="tablewrap"><table><thead><tr><th>Kayıttaki tarih</th><th>Olay</th><th>Sınıf</th><th>Sistem A</th><th class="bonly">Sistem B</th><th>JDN</th><th>Kaynak</th></tr></thead><tbody id="eventRows"></tbody></table></div>
+   <div id="filteredCount" class="count"></div>
+  </div>
+ </section>
+
+ <!-- DÖNÜŞTÜRÜCÜ -->
+ <section id="view-donustur" class="view scroll" hidden>
+  <div class="narrow">
+   <h1 class="page-h">Dönüştürücü</h1>
+   <p class="page-p">Bir tarihi hangi takvimde biliyorsan onu seç; bütün karşılıkları tek gün numarasından (JDN) hesaplanır.</p>
+   <div class="conv">
+    <div>
+     <div class="fgrid f2">
+      <div><label class="l" for="inputKind">Takvim</label><select id="inputKind" class="control"><option value="greg">Gregoryen</option><option value="jul">Jülyen</option><option value="A">Sistem A</option><option value="B">Sistem B</option></select></div>
+      <div id="eraHolder"><label class="l" for="inputEra">Dönem</label><select id="inputEra" class="control"><option value="ce">MS</option><option value="bce">MÖ</option></select></div>
+     </div>
+     <div class="fgrid f3" style="margin-top:12px">
+      <div><label class="l" for="inputDay">Gün</label><input type="number" id="inputDay" min="1" max="31" class="control"></div>
+      <div><label class="l" for="inputMonth">Ay</label><input type="number" id="inputMonth" min="1" max="13" class="control"></div>
+      <div><label class="l" for="inputYear">Yıl</label><input type="number" id="inputYear" min="1" class="control"></div>
+     </div>
+     <div id="convertError" class="preview err" hidden></div>
+     <div id="convertNote" class="note" hidden></div>
+     <div class="row" style="margin-top:16px"><button id="jumpConversion" class="btn primary">Takvimde göster</button><button id="addFromConversion" class="btn">Bu tarihle olay ekle</button><button id="copyConversion" class="btn">Kopyala</button></div>
+    </div>
+    <dl class="res">
+     <dt>Sistem A</dt><dd id="convA" class="big">—</dd>
+     <dt>Gün</dt><dd id="convWd">—</dd>
+     <dt>Jülyen</dt><dd id="convJul">—</dd>
+     <dt>Gregoryen</dt><dd id="convGreg">—</dd>
+     <dt class="bonly">Sistem B</dt><dd id="convB" class="bonly">—</dd>
+     <dt>JDN</dt><dd id="convJ">—</dd>
+     <dt>Asur tutulmasına göre</dt><dd id="convElapsed">—</dd>
+    </dl>
+   </div>
+  </div>
+ </section>
+
+ <!-- YÖNTEM VE AYARLAR -->
+ <section id="view-yontem" class="view scroll" hidden>
+  <div class="narrow two">
+   <div class="prose">
+    <h3>Bur Sagale Takvimi</h3>
+    <p>İngilizce adıyla Bur Sagale Calendar. Adını, yıl sayımının bağlandığı Bur-Sagale eponim yılındaki 15 Haziran MÖ 763 güneş tutulmasından alır.</p>
+    <h3>Sistem A</h3>
+    <p>Ay ve gün adları bildiğin gibi kalır; yalnızca yıllar 15 Haziran MÖ 763 Asur güneş tutulmasının yılından sayılır. 1 Ocak MÖ 763, Sistem A'da 1 Ocak 1'dir; bugünkü yıl 2789'dur. 1582'ye kadar Jülyen, sonrasında Gregoryen gün etiketleri kullanılır; 4 Ekim 2345'in ertesi günü 15 Ekim 2345'tir.</p>
+    <h3>Güven sınıfları</h3>
+    <div class="gl">
+     <span class="grade a">A</span><span>Olay güvenilir bir kayıtla tek bir güne sağlam biçimde bağlanıyor. A*: sabit bir güne doğrudan bitişik olay.</span>
+     <span class="grade b">B</span><span>Olay güvenilir, ama gün dönüşümünde 1–2 günlük belirsizlik var (B±1: bir gün; B?: dönüşüm denetlenecek).</span>
+     <span class="grade c">C</span><span>Olayın günü ya da kronolojik yeri tartışmalı. Katalogda durur, ay görünümünde gösterilmez.</span>
+    </div>
+    <h3>Yıldönümleri</h3>
+    <p>Bir olay, Sistem A'daki ay ve gününde anılır. Pidna Muharebesi 22 Haziran'da anılır; Gregoryen karşılığı (19 Haziran) olay ayrıntısında görünür. Belgenin kendi tarihi (Hicrî, Rumî, Babil ayı) ayrıca saklanır. Bir olay için farklı bir anma günü seçilebilir. 29 Şubat'ta anılan olaylar, 29 Şubat olmayan yıllarda 28 Şubat'ta görünür.</p>
+    <h3>Hesap ve kanıt</h3>
+    <p>Bir günün JDN değeri kesindir; o gün belirli bir olayın yaşandığı ise ayrı bir kanıt meselesidir. Takvim bu ikisini karıştırmaz: her kaydın sınıfı ve kaynağı birlikte gösterilir.</p>
+   </div>
+   <div>
+    <div class="box">
+     <h3>Ayarlar</h3>
+     <label class="check"><input type="checkbox" id="toggleB"><span>Sistem B'yi göster<br><span class="hint">15 Haziran MÖ 763'ten başlayan, 28 günlük 12 ay ve 29/30 günlük 13. aydan oluşan deneysel takvim.</span></span></label>
+     <label class="l" for="calendarLocale" style="margin-top:12px">Takvimde ay ve gün adları</label>
+     <select id="calendarLocale" class="control"><option value="tr-TR">Türkçe</option><option value="en-US">English</option><option value="de-DE">Deutsch</option><option value="ar-SA">العربية</option><option value="fa-IR">فارسی</option></select>
+    </div>
+    <div class="box">
+     <h3>Notların yedeği</h3>
+     <p class="hint" style="margin-top:0">Notlar bu bilgisayardaki tarayıcı deposunda durur. Ara sıra yedek al.</p>
+     <div class="row"><button class="btn" id="exportNotes">Notları indir</button><button class="btn" id="importNotes">Yedekten yükle</button><input id="importNotesFile" type="file" accept="application/json,.json" hidden></div>
+     <div id="backupStatus" class="status" style="margin-top:6px"></div>
+    </div>
+    <div class="box"><h3>Kaynak dizini</h3><div id="sourceList" class="srclist"></div></div>
+   </div>
+  </div>
+ </section>
+</main>
+
+<div id="scrim" class="scrim" hidden></div>
+<aside id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+ <div class="dr-head"><h2 id="drawerTitle">Olay ekle</h2><button class="iconbtn" id="closeDrawer" aria-label="Kapat">×</button></div>
+ <div class="dr-tabs" role="tablist"><button role="tab" data-dtab="form" aria-selected="true">Yeni olay</button><button role="tab" data-dtab="drafts" aria-selected="false" id="draftTabBtn">Taslaklar</button></div>
+ <div class="dr-body" id="dtab-form">
+  <fieldset><legend>Ne oldu?</legend>
+   <label class="l" for="fOlay">Olayın adı</label><input id="fOlay" class="control" placeholder="Örneğin: İstanbul'un fethi">
+   <label class="l" for="fNot" style="margin-top:10px">Açıklama ve kanıt</label><textarea id="fNot" class="control" placeholder="Olay neden bu güne bağlanıyor? Hangi belge, hangi dönüşüm?"></textarea>
+  </fieldset>
+  <fieldset><legend>Ne zaman?</legend>
+   <div class="fgrid f4">
+    <div><label class="l" for="fGun">Gün</label><input id="fGun" type="number" min="1" max="31" class="control"></div>
+    <div><label class="l" for="fAy">Ay</label><input id="fAy" type="number" min="1" max="12" class="control"></div>
+    <div><label class="l" for="fYil">Yıl</label><input id="fYil" type="number" min="1" class="control"></div>
+    <div><label class="l" for="fDonem">Dönem</label><select id="fDonem" class="control"><option value="MS">MS</option><option value="MÖ">MÖ</option></select></div>
+   </div>
+   <label class="l" for="fTakvim" style="margin-top:10px">Bu tarih hangi takvimde?</label>
+   <select id="fTakvim" class="control"><option value="jul">Jülyen</option><option value="greg">Gregoryen</option></select>
+   <div id="fPreview" class="preview" hidden></div>
+   <label class="l" for="fKaynakTarih" style="margin-top:12px">Belgedeki özgün tarih (isteğe bağlı)</label>
+   <input id="fKaynakTarih" class="control" placeholder="Örneğin: 20 Cemaziyelevvel 857 (Hicrî)">
+   <p class="hint">Hicrî ya da Rumî bir tarihin Jülyen veya Gregoryen karşılığını yukarıya, belgedeki ifadeyi buraya yaz. Hicrî günler akşam başladığı için çoğu zaman B±1 uygundur.</p>
+  </fieldset>
+  <fieldset><legend>Güven ve kaynak</legend>
+   <label class="l" for="fSinif">Güven sınıfı</label>
+   <select id="fSinif" class="control"><option value="A">A: tek güne sağlam bağlantı</option><option value="A*">A*: sabit bir güne doğrudan bitişik</option><option value="B">B: 1–2 gün belirsizlik</option><option value="B±1">B±1: bir gün belirsizlik</option><option value="B?">B?: dönüşüm denetlenecek</option><option value="C">C: tartışmalı</option></select>
+   <div class="fgrid f2" style="margin-top:10px">
+    <div><label class="l" for="fBolge">Bölge</label><input id="fBolge" class="control" list="dlBolge" placeholder="Osmanlı"></div>
+    <div><label class="l" for="fTur">Tür</label><input id="fTur" class="control" list="dlTur" placeholder="Tarih"></div>
+   </div>
+   <label class="l" for="fKaynaklar" style="margin-top:10px">Kayıtlı kaynaklar</label>
+   <input id="fKaynaklar" class="control" placeholder="Kaynak kodları, örneğin R05, R23">
+   <p class="hint">Kodlar Yöntem ve ayarlar bölümündeki kaynak dizinindedir. Dizinde olmayan bir kaynak için aşağıyı doldur.</p>
+   <div class="fgrid f2" style="margin-top:6px">
+    <div><label class="l" for="fYeniKaynakAd">Yeni kaynak</label><input id="fYeniKaynakAd" class="control" placeholder="Yazar, eser, yıl"></div>
+    <div><label class="l" for="fYeniKaynakUrl">Bağlantısı</label><input id="fYeniKaynakUrl" class="control" placeholder="https://"></div>
+   </div>
+  </fieldset>
+  <fieldset><legend>Yıldönümü</legend>
+   <label class="radio"><input type="radio" name="fYd" value="" checked> <span id="fYdDefault">Sistem A'daki ay ve gününde</span></label>
+   <label class="radio"><input type="radio" name="fYd" value="ozel"> Başka bir gün <input id="fYildonumu" class="control" style="width:96px;margin-left:6px" placeholder="GG.AA" disabled></label>
+  </fieldset>
+  <div id="fError" class="preview err" hidden></div>
+ </div>
+ <div class="dr-body" id="dtab-drafts" hidden>
+  <p id="draftIntro" class="hint" style="margin-top:0"></p>
+  <div class="row" style="margin:0 0 10px"><button id="fExport" class="btn primary">olaylar.js dosyasını indir</button></div>
+  <div id="draftList"></div>
+ </div>
+ <div class="dr-foot" id="formFoot"><button class="btn" id="cancelAdd">Vazgeç</button><button class="btn primary" id="fAdd">Taslak olarak ekle</button></div>
+</aside>
+<datalist id="dlBolge"></datalist><datalist id="dlTur"></datalist>
+<div id="toast" class="toast" role="status" hidden></div>
+<script>window.__veriHata=null;window.addEventListener("error",function(e){if(/olaylar\.js/i.test(e.filename||"")){window.__veriHata=(e.message||"yazım hatası")+(e.lineno?" (olaylar.js, satır "+e.lineno+")":"");}},true);</script>
+<script src="olaylar.js"></script>
+<script>
+(()=>{'use strict';
+const EPOCH=1442903,A_EPOCH=1442738,CUT=2299161,$=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString('tr-TR');
+const pad=n=>String(n).padStart(2,'0');
+// ================================================================ hesap motoru (V3'ten değişmedi)
+function jd(y,m,d,cal){const a=Math.floor((14-m)/12),Y=y+4800-a,M=m+12*a-3;const n=d+Math.floor((153*M+2)/5)+365*Y+Math.floor(Y/4);return cal==='greg'?n-Math.floor(Y/100)+Math.floor(Y/400)-32045:n-32083;}
+function fromJD(J,cal){let a,b,c;if(cal==='greg'){a=J+32044;b=Math.floor((4*a+3)/146097);c=a-Math.floor(146097*b/4);}else{b=0;c=J+32082;}const d=Math.floor((4*c+3)/1461),e=c-Math.floor(1461*d/4),m=Math.floor((5*e+2)/153);return {y:100*b+d-4800+Math.floor(m/10),m:m+3-12*Math.floor(m/10),d:e-Math.floor((153*m+2)/5)+1};}
+const fromA=J=>J>=A_EPOCH?(()=>{const q=fromJD(J,J<CUT?'jul':'greg');return {y:q.y+763,m:q.m,d:q.d}})():null;
+const fromB=J=>{if(J<EPOCH)return null;const g=fromJD(J,'greg'),sy=(g.m>6||g.m===6&&g.d>=7)?g.y:g.y-1,st=jd(sy,6,7,'greg'),doy=J-st+1,m=Math.min(13,Math.floor((doy-1)/28)+1);return {y:sy+763,m,d:doy-(m-1)*28,doy};};
+const label=o=>o?`${pad(o.d)}/${pad(o.m)}/${String(o.y).padStart(4,'0')}`:'başlamadı';
+const historical=o=>`${pad(o.d)}.${pad(o.m)}.${o.y<=0?1-o.y:o.y} ${o.y<=0?'MÖ':'MS'}`;
+function fromSystem(y,m,d,kind){if(!Number.isSafeInteger(y)||!Number.isSafeInteger(m)||!Number.isSafeInteger(d)||y<1||m<1||d<1)throw Error('Gün, ay ve yıl pozitif tam sayı olmalı.');if(kind==='A'){const ry=y-763,cal=(y>2345||y===2345&&(m>10||m===10&&d>=15))?'greg':'jul';return strict(ry,m,d,cal,kind);}if(kind==='B'){if(m>13)throw Error('Sistem B en fazla 13 ay içerir.');const sy=y-763,start=jd(sy,6,7,'greg'),end=jd(sy+1,6,7,'greg'),max=m===13?end-start-336:28;if(d>max)throw Error(`Sistem B'de ${m}. ay en fazla ${max} gündür.`);return start+(m-1)*28+d-1;}return strict(y,m,d,kind,kind);}
+function strict(y,m,d,cal,kind){if(m>12)throw Error('Bu takvimde en fazla 12 ay vardır.');const J=jd(y,m,d,cal),q=fromJD(J,cal);if(q.y!==y||q.m!==m||q.d!==d)throw Error('Bu ayda böyle bir gün yok.');if(kind==='A'&&J>=CUT&&cal==='jul')throw Error('Sistem A\'da 5–14 Ekim 2345 günleri yoktur; 4 Ekim\'in ertesi günü 15 Ekim\'dir.');if(kind==='A'&&J<CUT&&cal==='greg')throw Error('Sistem A 15 Ekim 2345 öncesinde Gregoryen tarih kullanmaz.');if(kind==='A'&&J<A_EPOCH)throw Error('Sistem A henüz başlamadı.');return J;}
+const week=J=>((J%7)+7)%7;
+const TR_DAYS=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+const TR_MONTHS=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const CAL_NAME={jul:'Jülyen',greg:'Gregoryen'};
+const human=o=>o.y<=0?`${o.d} ${TR_MONTHS[o.m-1]} MÖ ${1-o.y}`:`${o.d} ${TR_MONTHS[o.m-1]} ${o.y}`;
+const humanA=o=>`${o.d} ${TR_MONTHS[o.m-1]} ${o.y}`;
+const yearText=J=>{const y=fromJD(J,J<CUT?'jul':'greg').y;return y<=0?`MÖ ${1-y}`:`${y}`;};
+const where=x=>[x.region,x.category].filter(v=>v&&v!=='—').map((v,i)=>i?v.toLocaleLowerCase('tr-TR'):v).join(', ');
+const gradeClass=g=>g.startsWith('A')?'a':g.startsWith('B')?'b':'c';
+const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
+
+// ================================================================ veri
+const problems=[];
+function showProblems(fatal){const box=$('dataError');if(!problems.length){box.hidden=true;return;}box.hidden=false;box.innerHTML='';box.append(el('strong',null,fatal?'Olay dosyası (olaylar.js) okunamadı.':`olaylar.js içinde ${problems.length} sorun var. Sorunlu kayıtlar takvimde gösterilmiyor.`));const ul=el('ul');for(const p of problems.slice(0,30))ul.append(el('li',null,p));if(problems.length>30)ul.append(el('li',null,`ve ${problems.length-30} sorun daha`));box.append(ul);console.error('olaylar.js sorunları:',problems);}
+function parseTarih(s,cal){const m=/^\s*(\d{1,2})\.(\d{1,2})\.(\d{1,5})\s*(MÖ|MS)?\s*$/i.exec(String(s||''));if(!m)throw Error(`"tarih" GG.AA.YYYY ya da GG.AA.YYYY MÖ biçiminde olmalı (yazılan: "${s}")`);const d=+m[1],mo=+m[2];let y=+m[3];if(y<1)throw Error('Yıl 1 ya da daha büyük olmalı; milattan önce için MÖ seç.');if(m[4]&&m[4].toUpperCase()==='MÖ')y=1-y;if(cal!=='jul'&&cal!=='greg')throw Error(`"takvim" jul ya da greg olmalı (yazılan: "${cal}")`);if(mo<1||mo>12)throw Error('Ay 1 ile 12 arasında olmalı.');const J=jd(y,mo,d,cal),q=fromJD(J,cal);if(q.y!==y||q.m!==mo||q.d!==d)throw Error(`${s}, ${CAL_NAME[cal]} takviminde olmayan bir gün.`);return J;}
+const GRADES=['A','A*','B','B±1','B?','C'];
+const RAW=window.TAKVIM_VERI;
+const SOURCES={};const EVENTS=[];
+const DRAFT_KEY='history_calendar_drafts_v34';
+let drafts={olaylar:[],kaynaklar:{}};let draftInfo='';
+function validate(r,sources,warn){
+ if(!r||typeof r!=='object')throw Error('kayıt bir { ... } nesnesi olmalı');
+ if(!r.id)throw Error('"id" boş');
+ if(!r.olay||!String(r.olay).trim())throw Error('"olay" boş');
+ if(!GRADES.includes(r.sinif))throw Error(`"sinif" şunlardan biri olmalı: ${GRADES.join(', ')}`);
+ let J=null;const hasJ=r.jdn!==null&&r.jdn!==undefined&&r.jdn!=='';
+ if(hasJ){if(!Number.isSafeInteger(r.jdn))throw Error('"jdn" tam sayı olmalı');J=r.jdn;}
+ if(r.tarih){const T=parseTarih(r.tarih,r.takvim||'jul');if(J===null)J=T;else if(T!==J)throw Error(`"tarih" (${r.tarih}, ${CAL_NAME[r.takvim||'jul']}) JDN ${fmt(T)} ediyor ama "jdn" ${fmt(J)} yazılmış`);}
+ if(J===null)throw Error('"tarih" ya da "jdn" alanlarından en az biri dolu olmalı');
+ if(J<A_EPOCH)throw Error('tarih, takvimin başlangıcından (1 Ocak MÖ 763) önce');
+ if(r.yildonumu){const m=/^(\d{2})\.(\d{2})$/.exec(r.yildonumu);if(!m||+m[2]<1||+m[2]>12||+m[1]<1||+m[1]>[31,29,31,30,31,30,31,31,30,31,30,31][+m[2]-1])throw Error('"yildonumu" boş ya da geçerli bir GG.AA olmalı');}
+ const refs=Array.isArray(r.kaynaklar)?r.kaynaklar:[];if(warn)for(const c of refs)if(!sources[c])warn(`"${c}" kaynak dizininde yok`);
+ const A=fromA(J),cal=r.tarih?(r.takvim||'jul'):(J<CUT?'jul':'greg');
+ return {id:r.id,jdn:J,event:r.olay,region:r.bolge||'—',category:r.tur||'—',grade:r.sinif,refs,note:r.not||'',alt:r.alternatif||'',origin:r.koken||'',
+  kaynak_tarih:r.kaynak_tarih||'',tarihStr:r.tarih||historical(fromJD(J,cal)),takvim:cal,
+  julian:historical(fromJD(J,'jul')),A:label(A),B:label(fromB(J)),
+  annivKey:r.yildonumu?r.yildonumu:`${pad(A.d)}.${pad(A.m)}`,annivCustom:!!r.yildonumu,ay:A.y,calendar_default:r.sinif!=='C'};
+}
+if(!RAW||!Array.isArray(RAW.olaylar)){problems.push(window.__veriHata?`Hata: ${window.__veriHata}`:'olaylar.js bulunamadı ya da içinde yazım hatası var. Dosyanın Bur_Sagale_Takvimi.html ile aynı klasörde olduğundan emin ol; son değişiklikte eksik ya da fazla virgül, kapanmamış tırnak olup olmadığına bak.');showProblems(true);}
+else{
+ for(const [k,v] of Object.entries(RAW.kaynaklar||{}))SOURCES[k]={name:v.ad,url:v.url};
+ const seen=new Set();
+ RAW.olaylar.forEach((r,idx)=>{const who=r&&r.id?r.id:`${idx+1}. kayıt`;try{
+  if(r&&r.id&&seen.has(r.id))throw Error('aynı "id" birden fazla kayıtta var');if(r&&r.id)seen.add(r.id);
+  EVENTS.push(validate(r,SOURCES,msg=>problems.push(`${who}: ${msg} (kayıt yine de gösteriliyor)`)));
+ }catch(err){problems.push(`${who}: ${err.message}`);}});
+ try{const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');if(d&&Array.isArray(d.olaylar))drafts={olaylar:d.olaylar,kaynaklar:d.kaynaklar||{}};}catch(e){}
+ const before=drafts.olaylar.length;drafts.olaylar=drafts.olaylar.filter(r=>r&&!seen.has(r.id));
+ for(const k of Object.keys(drafts.kaynaklar))if(RAW.kaynaklar&&RAW.kaynaklar[k])delete drafts.kaynaklar[k];
+ if(drafts.olaylar.length!==before){draftInfo=`${before-drafts.olaylar.length} taslak artık olaylar.js içinde; taslaklardan çıkarıldı.`;try{localStorage.setItem(DRAFT_KEY,JSON.stringify(drafts));}catch(e){}}
+ for(const [k,v] of Object.entries(drafts.kaynaklar))SOURCES[k]={name:v.ad,url:v.url,taslak:true};
+ for(const r of drafts.olaylar){try{const e=validate(r,SOURCES,null);e.taslak=true;EVENTS.push(e);seen.add(r.id);}catch(err){problems.push(`Taslak ${r&&r.id}: ${err.message}`);}}
+ EVENTS.sort((a,b)=>a.jdn-b.jdn);
+ showProblems(false);
+}
+
+// ================================================================ durum
+const localToday=()=>{const t=new Date();return jd(t.getFullYear(),t.getMonth()+1,t.getDate(),'greg');};
+let todayJ=localToday();
+let mode='A',selectedJ=todayJ,viewJ=todayJ,convertedJ=todayJ,highlightedId=null,personal={},view='takvim';
+try{personal=JSON.parse(localStorage.getItem('history_calendar_notes_v3')||'{}');if(typeof personal!=='object'||personal===null||Array.isArray(personal))personal={};}catch(e){personal={};}
+let showB=false;try{showB=localStorage.getItem('takvim_gelismis_B')==='1';}catch(e){}
+let locale='tr-TR';try{locale=localStorage.getItem('takvim_dil')||'tr-TR';}catch(e){}
+function storeNotes(){try{localStorage.setItem('history_calendar_notes_v3',JSON.stringify(personal));return true;}catch(e){return false;}}
+let toastTimer=null;function toast(msg){const t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.hidden=true,4200);}
+
+// ================================================================ yıldönümleri
+function anniversaries(J){const a=fromA(J);if(!a)return [];const keys=[`${pad(a.d)}.${pad(a.m)}`];if(a.m===2&&a.d===28){const n=fromA(J+1);if(n&&n.m===3)keys.push('29.02');}
+ return EVENTS.filter(e=>e.grade!=='C'&&e.jdn<J&&keys.includes(e.annivKey)).map(e=>({...e,yearsAgo:a.y-e.ay}));}
+
+// ================================================================ görünümler
+function setView(v){view=v;for(const b of document.querySelectorAll('.tabs [data-view]'))b.setAttribute('aria-selected',String(b.dataset.view===v));for(const s of ['takvim','katalog','donustur','yontem'])$('view-'+s).hidden=s!==v;if(v==='katalog')renderCatalog();}
+document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b)setView(b.dataset.view);});
+
+// ================================================================ üst çubuk ve şerit
+function renderBar(){const a=fromA(todayJ);$('barDate').textContent=humanA(a);$('barDay').textContent=TR_DAYS[week(todayJ)];document.title=`${humanA(a)} · Bur Sagale Takvimi`;
+ const n=drafts.olaylar.length;$('draftPill').hidden=!n;$('draftPill').textContent=`${n} taslak olay kaydedilmedi`;$('draftTabBtn').textContent=n?`Taslaklar (${n})`:'Taslaklar';}
+let ribbonHover=null;
+function renderRibbon(){const svg=$('ribbon');const W=svg.clientWidth||1200,H=svg.clientHeight||64;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const L=20,R=W-24,maxY=fromA(todayJ).y,x=y=>L+(R-L)*(y-1)/(maxY-1),axisY=40;const NS='http://www.w3.org/2000/svg';
+ const s=(tag,attrs,text)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e;};
+ svg.innerHTML='';svg.append(s('rect',{x:0,y:0,width:W,height:H,fill:'transparent'}));
+ svg.append(s('line',{x1:L,x2:R,y1:axisY,y2:axisY,class:'r-axis'}));
+ const marks=[[1,'MÖ 763'],[764-500,'MÖ 500'],[764,'MS 1'],[764+500,'500'],[764+1000,'1000'],[764+1500,'1500']];
+ for(const [y,t] of marks){svg.append(s('line',{x1:x(y),x2:x(y),y1:axisY,y2:axisY+4,class:'r-axis'}));svg.append(s('text',{x:x(y),y:axisY+16,class:'r-lab','text-anchor':y===1?'start':'middle'},t));}
+ const evs=EVENTS.filter(e=>e.grade!=='C');
+ for(const e of evs){const X=x(e.ay),h=e.grade.startsWith('A')?16:10;const g=s('g',{});const hit=s('rect',{x:X-3,y:axisY-20,width:6,height:22,class:'r-hit'});hit.append(s('title',{},`${e.event} (${yearText(e.jdn)})`));hit.addEventListener('click',ev=>{ev.stopPropagation();setView('takvim');jumpTo(e.jdn,e.id);});g.append(hit,s('line',{x1:X,x2:X,y1:axisY-h,y2:axisY,class:'r-tick'+(e.grade.startsWith('A')?' a':'')+(e.taslak?' draft':'')+(e.jdn===selectedJ?' hot':'')}));svg.append(g);}
+ const sel=fromA(selectedJ),tx=x(maxY);
+ svg.append(s('line',{x1:tx,x2:tx,y1:8,y2:axisY+4,class:'r-today'}));svg.append(s('text',{x:tx-6,y:18,class:'r-todaylab','text-anchor':'end'},`Bugün, ${maxY}`));
+ if(sel&&sel.y!==maxY){const sx=x(sel.y);svg.append(s('line',{x1:sx,x2:sx,y1:10,y2:axisY+4,class:'r-sel'}));svg.append(s('text',{x:sx+(sx>W-160?-6:6),y:18,class:'r-sellab','text-anchor':sx>W-160?'end':'start'},`${sel.y} (${yearText(selectedJ)})`));}
+ svg.append(s('text',{x:L,y:18,class:'r-cap'},`Asur tutulmasından bugüne ${fmt(maxY)} yıl, katalogda ${fmt(evs.length)} olay`));
+ if(ribbonHover!=null){const hy=Math.max(1,Math.min(maxY,Math.round(1+(ribbonHover-L)/(R-L)*(maxY-1))));const hx=x(hy),ce=hy-763;svg.append(s('line',{x1:hx,x2:hx,y1:24,y2:axisY,class:'r-hover'}));svg.append(s('text',{x:hx+(hx>W-160?-6:6),y:axisY-8,class:'r-hoverlab','text-anchor':hx>W-160?'end':'start'},`${hy} (${ce<=0?'MÖ '+(1-ce):'MS '+ce})`));}
+ svg.dataset.l=L;svg.dataset.r=R;svg.dataset.max=maxY;}
+$('ribbon').addEventListener('mousemove',e=>{const r=e.currentTarget.getBoundingClientRect();ribbonHover=e.clientX-r.left;renderRibbon();});
+$('ribbon').addEventListener('mouseleave',()=>{ribbonHover=null;renderRibbon();});
+$('ribbon').addEventListener('click',e=>{const svg=$('ribbon'),r=svg.getBoundingClientRect(),L=+svg.dataset.l,R=+svg.dataset.r,max=+svg.dataset.max;const y=Math.max(1,Math.min(max,Math.round(1+(e.clientX-r.left-L)/(R-L)*(max-1))));const cur=fromA(selectedJ);let J=null;for(let d=cur.d;d>=1&&J===null;d--){try{J=fromSystem(y,cur.m,d,'A');}catch(err){}}if(J===null)J=fromSystem(y,1,1,'A');setView('takvim');jumpTo(J);});
+window.addEventListener('resize',()=>renderRibbon());
+
+// ================================================================ takvim
+function onMonth(J,sys=mode){return sys==='A'?fromA(J):fromB(J);}
+function monthStart(y,m){return fromSystem(y,m,1,mode==='A'?'A':'B');}
+function monthLength(y,m){if(mode==='A'){const s=monthStart(y,m);if(y===2345&&m===10)return 21;let yy=y,mm=m+1;if(mm>12){mm=1;yy++;}return fromSystem(yy,mm,1,'A')-s;}if(m<=12)return 28;const sy=y-763;return jd(sy+1,6,7,'greg')-jd(sy,6,7,'greg')-336;}
+function moveMonth(delta){const a=onMonth(viewJ);if(!a)return;let y=a.y,m=a.m+delta,max=mode==='A'?12:13;while(m<1){m+=max;y--;}while(m>max){m-=max;y++;}if(y<1)return;viewJ=monthStart(y,m);renderMonth();}
+function renderMonth(){if(viewJ<A_EPOCH)viewJ=A_EPOCH;if(mode==='B'&&viewJ<EPOCH)viewJ=EPOCH;const o=onMonth(viewJ);if(!o)return;const start=monthStart(o.y,o.m),span=monthLength(o.y,o.m);
+ const mName=mode==='A'?new Intl.DateTimeFormat(locale,{month:'long'}).format(new Date(Date.UTC(2024,o.m-1,1))):`${pad(o.m)}. ay`;
+ $('monthTitle').textContent=`${mName} ${o.y}`;
+ const g0=fromJD(start,'greg'),g1=fromJD(start+span-1,'greg'),j0=fromJD(start,'jul');
+ $('monthSub').textContent=mode==='A'?(start<CUT?`${(y=>y<=0?'MÖ '+(1-y):'MS '+y)(j0.y)}, Jülyen etiketlerle`:`Miladi ${g0.y}${g1.y!==g0.y?'–'+g1.y:''}`):`${human(g0)} – ${human(g1)} (Gregoryen)`;
+ const head=$('weekdayHeader');head.innerHTML='';for(let i=0;i<7;i++)head.append(el('div',null,new Intl.DateTimeFormat(locale,{weekday:'short',timeZone:'UTC'}).format(new Date(Date.UTC(2024,0,1+i)))));
+ const grid=$('dayGrid');grid.innerHTML='';const lead=week(start);const evmap=new Map();for(const e of EVENTS)if(e.calendar_default&&e.jdn>=start&&e.jdn<start+span){const ar=evmap.get(e.jdn)||[];ar.push(e);evmap.set(e.jdn,ar);}
+ const rows=Math.ceil((lead+span)/7);grid.style.gridTemplateRows=`repeat(${rows},minmax(64px,1fr))`;
+ for(let i=0;i<rows*7;i++){const off=i-lead;if(off<0||off>=span){grid.append(el('div','cell out'));continue;}const J=start+off,ob=onMonth(J),wd=week(J);
+  const b=el('button','cell'+(J===todayJ?' today':'')+(J===selectedJ?' sel':'')+(wd>=5?' wkend':''));b.type='button';
+  const evs=evmap.get(J)||[],an=mode==='A'&&!evs.length?anniversaries(J):[];
+  b.setAttribute('aria-label',`${ob.d} ${mName}${evs.length?', '+evs.length+' olay':''}${an.length?', '+an.length+' yıldönümü':''}${J===todayJ?', bugün':''}`);
+  b.append(el('span','num',ob.d));
+  if(evs.length){const e=evs[0];b.append(el('span','ev-line'+(gradeClass(e.grade)==='b'?' b':'')+(e.taslak?' draft':''),e.event));if(evs.length>1)b.append(el('span','more',`ve ${evs.length-1} olay daha`));}
+  else if(an.length){const t=el('span','an-line',`↺ ${an[0].event}`);t.title=an.map(x=>`${x.event} (${fmt(x.yearsAgo)} yıl önce)`).join('\n');b.append(t);if(an.length>1)b.append(el('span','more',`ve ${an.length-1} yıldönümü daha`));}
+  if(personal[String(J)])b.append(el('span','note-dot'));
+  b.onclick=()=>{selectedJ=J;highlightedId=null;renderMonth();renderDay();renderRibbon();};grid.append(b);}
+}
+function eventCard(x,anniv){const a=el('article','ev');const h=el('div','ev-head');h.append(el('h4',null,x.event));const g=el('span','grade '+gradeClass(x.grade),x.grade);g.title='Güven sınıfı';h.append(g);if(x.taslak){const t=el('span','draft-tag','taslak');t.title='Henüz olaylar.js içinde değil';h.append(t);}a.append(h);
+ const when=anniv?`${yearText(x.jdn)}, ${fmt(x.yearsAgo)} yıl önce`:where(x);a.append(el('p','ev-when',when));
+ if(x.note)a.append(el('p','ev-note',x.note));
+ const det=el('details');det.append(el('summary',null,'Tarih ve kaynaklar'));const dl=el('dl');
+ const add=(k,v)=>{if(!v)return;dl.append(el('dt',null,k),el('dd',null,v));};
+ add('Kayıttaki tarih',`${x.tarihStr} (${CAL_NAME[x.takvim]})`);add('Belgedeki tarih',x.kaynak_tarih);add('Jülyen',human(fromJD(x.jdn,'jul')));add('Gregoryen',human(fromJD(x.jdn,'greg')));add('Sistem A',humanA(fromA(x.jdn)));if(showB)add('Sistem B',x.B);add('JDN',fmt(x.jdn));
+ add('Yıldönümü',x.annivCustom?`${x.annivKey} (özel)`:`${x.annivKey} (Sistem A)`);if(x.alt)add('Alternatif',x.alt);det.append(dl);
+ const srcs=el('div','srcs');for(const c of x.refs){const r=SOURCES[c];if(!r)continue;const l=el('a',null,`${c}: ${r.name}`);if(r.url){l.href=r.url;l.target='_blank';l.rel='noopener';}srcs.append(l);}det.append(srcs);
+ if(x.id===highlightedId)det.open=true;a.append(det);return a;}
+function renderDay(){const A=fromA(selectedJ),wd=TR_DAYS[week(selectedJ)];
+ $('dTitle').textContent=mode==='B'&&showB?`${label(fromB(selectedJ))}`:humanA(A);$('dWeekday').textContent=selectedJ===todayJ?`${wd}, bugün`:wd;
+ const dl=$('dEq');dl.innerHTML='';const add=(k,v)=>dl.append(el('dt',null,k),el('dd',null,v));
+ add('Jülyen',human(fromJD(selectedJ,'jul')));add('Gregoryen',human(fromJD(selectedJ,'greg')));if(showB)add(mode==='B'?'Sistem A':'Sistem B',mode==='B'?humanA(A):label(fromB(selectedJ)));add('JDN',fmt(selectedJ));
+ const d=selectedJ-EPOCH;add('Asur tutulması',d===0?'bu gün':d>0?`${fmt(d)} gün sonra`:`${fmt(-d)} gün önce`);
+ const box=$('dayEvents');box.innerHTML='';const evs=EVENTS.filter(e=>e.jdn===selectedJ&&(e.grade!=='C'||e.id===highlightedId));
+ if(!evs.length)box.append(el('p','empty','Bu güne bağlı kayıtlı bir olay yok.'));for(const x of evs)box.append(eventCard(x,false));
+ const an=anniversaries(selectedJ);$('annivSec').hidden=!an.length;const ab=$('annivEvents');ab.innerHTML='';for(const x of an)ab.append(eventCard(x,true));
+ $('personalNote').value=personal[String(selectedJ)]||'';$('noteStatus').textContent='';}
+function jumpTo(J,highlight=null){highlightedId=highlight;viewJ=selectedJ=J;renderMonth();renderDay();renderRibbon();}
+$('prev').onclick=()=>moveMonth(-1);$('next').onclick=()=>moveMonth(1);$('jumpToday').onclick=()=>jumpTo(todayJ);
+$('modeSwitch').addEventListener('click',ev=>{const b=ev.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;if(mode==='B'&&viewJ<EPOCH)viewJ=EPOCH;for(const x of document.querySelectorAll('#modeSwitch button'))x.classList.toggle('on',x.dataset.mode===mode);renderMonth();renderDay();});
+$('saveNote').onclick=()=>{const t=$('personalNote').value.trim();if(t)personal[String(selectedJ)]=t;else delete personal[String(selectedJ)];$('noteStatus').textContent=storeNotes()?'Kaydedildi.':'Kaydedilemedi; Yöntem ve ayarlar bölümünden notları indir.';renderMonth();};
+$('deleteNote').onclick=()=>{delete personal[String(selectedJ)];storeNotes();$('personalNote').value='';$('noteStatus').textContent='Not silindi.';renderMonth();};
+$('addForDay').onclick=()=>openDrawer('form',selectedJ);
+
+// klavye: oklar gün, PageUp/PageDown ay, T bugün
+document.addEventListener('keydown',e=>{if($('drawer').classList.contains('open')){if(e.key==='Escape')closeDrawer();return;}if(view!=='takvim'||e.ctrlKey||e.metaKey||e.altKey)return;const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;
+ const step={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];if(step){e.preventDefault();const J=selectedJ+step;if(J<A_EPOCH)return;const was=document.activeElement&&document.activeElement.classList.contains('cell');jumpTo(J);if(was){const c=document.querySelector('.cell.sel');c&&c.focus();}return;}
+ if(e.key==='PageUp'){e.preventDefault();moveMonth(-1);}else if(e.key==='PageDown'){e.preventDefault();moveMonth(1);}else if(e.key==='t'||e.key==='T'){jumpTo(todayJ);}});
+
+// ================================================================ katalog
+function fillFilters(){for(const [id,key,dl] of [['regionFilter','region','dlBolge'],['categoryFilter','category','dlTur']]){const vals=[...new Set(EVENTS.map(e=>e[key]))].sort((a,b)=>a.localeCompare(b,'tr'));const sel=$(id),keep=sel.value;sel.length=1;$(dl).innerHTML='';for(const v of vals){const o=el('option',null,v);o.value=v;sel.append(o);const d=el('option');d.value=v;$(dl).append(d);}if([...sel.options].some(o=>o.value===keep))sel.value=keep;}}
+function gradeMatch(e,g){return g==='all'||g==='strong'&&e.grade!=='C'||g==='A'&&e.grade.startsWith('A')||g==='B'&&e.grade.startsWith('B')||g==='C'&&e.grade==='C'||g==='draft'&&e.taslak;}
+function filteredRows(){const term=$('searchEvents').value.toLocaleLowerCase('tr-TR').trim(),gr=$('gradeFilter').value,re=$('regionFilter').value,ca=$('categoryFilter').value;return EVENTS.filter(e=>gradeMatch(e,gr)&&(re==='all'||e.region===re)&&(ca==='all'||e.category===ca)&&(`${e.event} ${e.region} ${e.tarihStr} ${e.julian} ${e.A} ${e.note} ${e.kaynak_tarih}`).toLocaleLowerCase('tr-TR').includes(term));}
+function renderCatalog(){const rows=filteredRows(),body=$('eventRows');body.innerHTML='';
+ for(const e of rows){const tr=el('tr');tr.tabIndex=0;const go=()=>{setView('takvim');jumpTo(e.jdn,e.id);};tr.onclick=go;tr.onkeydown=ev=>{if(ev.key==='Enter')go();};
+  tr.append(el('td',null,`${e.tarihStr} ${e.takvim==='jul'?'Jül.':'Greg.'}`));
+  const t=el('td');t.append(el('div','t',e.event),el('small',null,`${where(e)}${e.taslak?' (taslak)':''}`));tr.append(t);
+  const g=el('td');g.append(el('span','grade '+gradeClass(e.grade),e.grade));tr.append(g);
+  tr.append(el('td',null,e.A),el('td','bonly',e.B),el('td',null,fmt(e.jdn)),el('td',null,e.refs.join(', ')));body.append(tr);}
+ $('filteredCount').textContent=`${fmt(rows.length)} kayıt gösteriliyor (toplam ${fmt(EVENTS.length)}).`;return rows;}
+for(const id of ['searchEvents','gradeFilter','regionFilter','categoryFilter'])$(id).addEventListener('input',renderCatalog);
+function download(name,content,mime){const blob=new Blob([content],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+$('downloadCSV').onclick=()=>{const rows=filteredRows();const cols=['ID','Kayıttaki tarih','Takvim','Jülyen','Olay','Bölge','Tür','Sınıf','JDN','Sistem A','Sistem B','Belgedeki tarih','Kaynaklar','Not'];const lines=[cols,...rows.map(e=>[e.id,e.tarihStr,CAL_NAME[e.takvim],e.julian,e.event,e.region,e.category,e.grade,e.jdn,e.A,e.B,e.kaynak_tarih,e.refs.map(i=>SOURCES[i]?.url||i).join(' ; '),e.note])].map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(','));download('bur_sagale_takvimi_katalog.csv','﻿'+lines.join('\r\n'),'text/csv;charset=utf-8');};
+
+// ================================================================ dönüştürücü
+const kind=$('inputKind');
+function updateEra(){$('eraHolder').hidden=kind.value==='A'||kind.value==='B';$('inputMonth').max=kind.value==='B'?'13':'12';}
+kind.onchange=()=>{updateEra();calculate();};
+function parseInput(){let y=+$('inputYear').value;const m=+$('inputMonth').value,d=+$('inputDay').value;if(kind.value==='greg'||kind.value==='jul'){if(!Number.isInteger(y)||y<1)throw Error('Yıl 1 ya da daha büyük olmalı; milattan önce için dönemi MÖ seç.');if($('inputEra').value==='bce')y=1-y;return strict(y,m,d,kind.value,kind.value);}return fromSystem(y,m,d,kind.value);}
+function calculate(){const err=$('convertError'),note=$('convertNote');try{const J=parseInput();convertedJ=J;const A=fromA(J);
+ $('convA').textContent=A?humanA(A):'başlamadı';$('convWd').textContent=TR_DAYS[week(J)];$('convB').textContent=label(fromB(J));$('convJul').textContent=human(fromJD(J,'jul'));$('convGreg').textContent=human(fromJD(J,'greg'));$('convJ').textContent=fmt(J);const d=J-EPOCH;$('convElapsed').textContent=d===0?'tutulma günü':d>0?`${fmt(d)} gün sonra`:`${fmt(-d)} gün önce`;err.hidden=true;
+ let msg='';if(kind.value==='greg'&&J<CUT)msg=`Gregoryen takvim 1582'de başladı; bu tarih onun geriye doğru uygulanmış hâlidir. O dönemin belgeleri Jülyen tarih kullanır: aynı gün Jülyen takvimde ${human(fromJD(J,'jul'))}. Sistem A 1582'ye kadar Jülyen etiketi kullandığı için ${A?humanA(A):'—'} gösterir.`;
+ else if(kind.value==='jul'&&J>=CUT)msg=`Sistem A, 1582'den sonra Gregoryen etiket kullanır (${human(fromJD(J,'greg'))}). Rusya, Yunanistan ve 1917'ye kadar Osmanlı'nın Rumî takvimi gibi Jülyen esaslı takvimler bu dönemde de kullanıldı; böyle bir belgenin özgün tarihini olay kaydında ayrıca sakla.`;
+ note.textContent=msg;note.hidden=!msg;$('jumpConversion').disabled=$('addFromConversion').disabled=!A;}
+ catch(e){convertedJ=null;err.textContent=e.message;err.hidden=false;note.hidden=true;for(const id of ['convA','convWd','convB','convJul','convGreg','convJ','convElapsed'])$(id).textContent='—';$('jumpConversion').disabled=$('addFromConversion').disabled=true;}}
+for(const id of ['inputYear','inputMonth','inputDay','inputEra'])$(id).addEventListener('input',calculate);
+$('jumpConversion').onclick=()=>{if(convertedJ!=null&&convertedJ>=A_EPOCH){setView('takvim');jumpTo(convertedJ);}};
+$('addFromConversion').onclick=()=>{if(convertedJ!=null&&convertedJ>=A_EPOCH)openDrawer('form',convertedJ);};
+$('copyConversion').onclick=()=>{if(convertedJ==null)return;const t=`Sistem A ${$('convA').textContent} (${$('convWd').textContent}) | Jülyen ${$('convJul').textContent} | Gregoryen ${$('convGreg').textContent} | JDN ${convertedJ}`;navigator.clipboard?.writeText(t).then(()=>toast('Kopyalandı.')).catch(()=>window.prompt('Kopyala:',t));};
+function setConverterToday(){const g=fromJD(todayJ,'greg');kind.value='greg';$('inputYear').value=g.y;$('inputMonth').value=g.m;$('inputDay').value=g.d;$('inputEra').value='ce';updateEra();calculate();}
+
+// ================================================================ yöntem ve ayarlar
+function applyB(){document.body.classList.toggle('noB',!showB);$('toggleB').checked=showB;if(!showB&&mode==='B'){mode='A';for(const x of document.querySelectorAll('#modeSwitch button'))x.classList.toggle('on',x.dataset.mode==='A');}}
+$('toggleB').onchange=()=>{showB=$('toggleB').checked;try{localStorage.setItem('takvim_gelismis_B',showB?'1':'0');}catch(e){}applyB();renderMonth();renderDay();renderCatalog();};
+$('calendarLocale').value=locale;$('calendarLocale').onchange=()=>{locale=$('calendarLocale').value;try{localStorage.setItem('takvim_dil',locale);}catch(e){}renderMonth();};
+function renderSources(){const box=$('sourceList');box.innerHTML='';for(const [k,v] of Object.entries(SOURCES)){const a=el('a');if(v.url){a.href=v.url;a.target='_blank';a.rel='noopener noreferrer';}a.append(el('b',null,k),document.createTextNode(v.name+(v.taslak?' (taslak)':'')));box.append(a);}}
+$('exportNotes').onclick=()=>{download('kisisel_takvim_notlarim.json',JSON.stringify({version:3,notes:personal},null,2),'application/json');$('backupStatus').textContent=`${Object.keys(personal).length} not indirildi.`;};
+$('importNotes').onclick=()=>$('importNotesFile').click();
+$('importNotesFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());const src=o.notes||o;if(!src||typeof src!=='object'||Array.isArray(src))throw Error('dosya bir not yedeği değil');const add=Object.fromEntries(Object.entries(src).filter(([k,v])=>/^\d+$/.test(k)&&typeof v==='string'));personal={...personal,...add};storeNotes();renderMonth();renderDay();$('backupStatus').textContent=`${Object.keys(add).length} not yüklendi.`;}catch(err){$('backupStatus').textContent='Yüklenemedi: '+err.message;}e.target.value='';};
+
+// ================================================================ olay ekleme çekmecesi
+function dataHeader(){return `// =====================================================================
+//  BUR SAGALE TAKVİMİ · OLAY VERİTABANI (olaylar.js)
+//  Bu dosya takvimdeki "olaylar.js dosyasını indir" düğmesiyle üretildi.
+// =====================================================================
+//  Takvim (Bur_Sagale_Takvimi.html) ve görev çubuğu simgesi olayları
+//  YALNIZCA bu dosyadan okur. En kolay ekleme yolu takvimdeki
+//  "Olay ekle" düğmesidir.
+//
+//  DİKKAT: Aşağıdaki "window.TAKVIM_VERI" satırından sonrası saf JSON'dur.
+//   - Her metin çift tırnak içinde olmalı: "ornek"
+//   - Kayıtlar arasında virgül olmalı; son kayıttan sonra virgül OLMAMALI.
+//   - Bu bölgenin içine // yorum satırı yazma.
+//
+//  ALANLAR
+//   id           Benzersiz kimlik (T001, T002 ...)
+//   tarih        "GG.AA.YYYY" ya da milattan önce için "GG.AA.YYYY MÖ"
+//   takvim       "jul" (Jülyen) ya da "greg" (Gregoryen): "tarih" hangi takvimde?
+//   jdn          Jülyen Gün Numarası. null bırakılırsa "tarih"ten hesaplanır.
+//                İkisi birden yazılırsa takvim ikisinin tutup tutmadığını denetler.
+//   sinif        A, A*, B, B±1, B?, C   (C kayıtları ay görünümünde gösterilmez)
+//   kaynaklar    Aşağıdaki "kaynaklar" listesindeki kodlar: ["R05","R23"]
+//   kaynak_tarih Belgenin kendi tarih ifadesi ve takvimi (Hicrî, Rumî, Babil ayı...)
+//   yildonumu    Boş = olayın Sistem A ay/gününde anılır (varsayılan kural).
+//                Farklı bir gün istenirse "GG.AA" yaz; örn. "29.05"
+//
+//  Sistem A, B, Jülyen ve Gregoryen etiketleri burada SAKLANMAZ; hepsi
+//  takvim açılırken tek hesap motoruyla JDN'den üretilir.
+// =====================================================================
+`;}
+function nextId(){let mx=0;for(const r of [...(RAW&&RAW.olaylar||[]),...drafts.olaylar]){const m=/^T(\d+)$/.exec(r&&r.id||'');if(m)mx=Math.max(mx,+m[1]);}return 'T'+String(mx+1).padStart(3,'0');}
+function nextSourceId(){let mx=0;for(const k of Object.keys(SOURCES)){const m=/^R(\d+)$/.exec(k);if(m)mx=Math.max(mx,+m[1]);}return 'R'+String(mx+1).padStart(2,'0');}
+function saveDrafts(){try{localStorage.setItem(DRAFT_KEY,JSON.stringify(drafts));return true;}catch(e){return false;}}
+let lastFocus=null;
+function openDrawer(tab,J){lastFocus=document.activeElement;if(!RAW){toast('olaylar.js okunamadığı için olay eklenemiyor.');return;}
+ if(J!=null){const cal=J<CUT?'jul':'greg',q=fromJD(J,cal);$('fGun').value=q.d;$('fAy').value=q.m;$('fYil').value=q.y<=0?1-q.y:q.y;$('fDonem').value=q.y<=0?'MÖ':'MS';$('fTakvim').value=cal;}
+ $('scrim').hidden=false;$('drawer').classList.add('open');setDTab(tab||'form');livePreview();setTimeout(()=>{(tab==='drafts'?$('fExport'):(J!=null?$('fOlay'):$('fOlay'))).focus();},60);}
+function closeDrawer(){$('drawer').classList.remove('open');$('scrim').hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+function setDTab(t){for(const b of document.querySelectorAll('.dr-tabs [data-dtab]'))b.setAttribute('aria-selected',String(b.dataset.dtab===t));$('dtab-form').hidden=t!=='form';$('dtab-drafts').hidden=t!=='drafts';$('formFoot').hidden=t!=='form';if(t==='drafts')renderDrafts();}
+document.querySelector('.dr-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-dtab]');if(b)setDTab(b.dataset.dtab);});
+$('openAdd').onclick=()=>openDrawer('form',null);$('draftPill').onclick=()=>openDrawer('drafts',null);$('closeDrawer').onclick=closeDrawer;$('cancelAdd').onclick=closeDrawer;$('scrim').onclick=closeDrawer;
+$('drawer').addEventListener('keydown',e=>{if(e.key!=='Tab')return;const f=[...$('drawer').querySelectorAll('button,input,select,textarea,a[href]')].filter(x=>!x.disabled&&x.offsetParent!==null);if(!f.length)return;const first=f[0],last=f[f.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
+for(const r of document.querySelectorAll('input[name="fYd"]'))r.onchange=()=>{const oz=document.querySelector('input[name="fYd"]:checked').value==='ozel';$('fYildonumu').disabled=!oz;if(oz)$('fYildonumu').focus();};
+function formDate(){const d=+$('fGun').value,m=+$('fAy').value,y=+$('fYil').value;if(!$('fGun').value||!$('fAy').value||!$('fYil').value)return null;if(!Number.isInteger(d)||!Number.isInteger(m)||!Number.isInteger(y)||d<1||m<1||y<1)throw Error('Gün, ay ve yıl pozitif tam sayı olmalı.');const tarih=`${pad(d)}.${pad(m)}.${y}${$('fDonem').value==='MÖ'?' MÖ':''}`;const J=parseTarih(tarih,$('fTakvim').value);if(J<A_EPOCH)throw Error('Bu tarih takvimin başlangıcından (1 Ocak MÖ 763) önce.');return {tarih,J};}
+function livePreview(){const p=$('fPreview');try{const r=formDate();if(!r){p.hidden=true;$('fYdDefault').textContent="Sistem A'daki ay ve gününde";return;}const A=fromA(r.J),cal=$('fTakvim').value,other=cal==='jul'?'greg':'jul';
+ p.className='preview';p.textContent=`Sistem A'da ${humanA(A)}, ${TR_DAYS[week(r.J)]}. ${CAL_NAME[other]} karşılığı ${human(fromJD(r.J,other))}.`;p.hidden=false;$('fYdDefault').textContent=`Sistem A'daki ay ve gününde (${A.d} ${TR_MONTHS[A.m-1]})`;}
+ catch(e){p.className='preview err';p.textContent=e.message;p.hidden=false;}}
+for(const id of ['fGun','fAy','fYil','fDonem','fTakvim'])$(id).addEventListener('input',livePreview);
+function readForm(){
+ if(!$('fOlay').value.trim())throw Error('Olayın adını yaz.');
+ const dt=formDate();if(!dt)throw Error('Gün, ay ve yılı doldur.');
+ const codes=[...new Set($('fKaynaklar').value.split(/[,;\s]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+ for(const c of codes)if(!SOURCES[c])throw Error(`${c} kaynak dizininde yok. Dizindeki kodlardan birini yaz ya da yeni kaynak ekle.`);
+ let newSrc=null;const ad=$('fYeniKaynakAd').value.trim(),url=$('fYeniKaynakUrl').value.trim();
+ if(ad||url){if(!ad)throw Error('Yeni kaynağın adını yaz.');if(url&&!/^https?:\/\/\S+$/i.test(url))throw Error('Kaynak bağlantısı http:// ya da https:// ile başlamalı.');newSrc={id:nextSourceId(),ad,url};codes.push(newSrc.id);}
+ if(!codes.length)throw Error('En az bir kaynak gerekli: kayıtlı bir kaynak kodu yaz ya da yeni kaynak ekle.');
+ const oz=document.querySelector('input[name="fYd"]:checked').value==='ozel',yd=oz?$('fYildonumu').value.trim():'';
+ if(oz&&!yd)throw Error('Anma gününü GG.AA biçiminde yaz, örneğin 29.05.');
+ const r={id:nextId(),tarih:dt.tarih,takvim:$('fTakvim').value,jdn:dt.J,olay:$('fOlay').value.trim(),bolge:$('fBolge').value.trim(),tur:$('fTur').value.trim()||'Tarih',sinif:$('fSinif').value,kaynaklar:codes,not:$('fNot').value.trim(),alternatif:'',koken:'Form ile eklendi',kaynak_tarih:$('fKaynakTarih').value.trim(),yildonumu:yd};
+ const tmp={...SOURCES};if(newSrc)tmp[newSrc.id]={name:ad,url};
+ const e=validate(r,tmp,null);
+ const dup=EVENTS.find(x=>x.jdn===e.jdn&&x.event.toLocaleLowerCase('tr-TR')===e.event.toLocaleLowerCase('tr-TR'));
+ return {r,e,newSrc,dup};}
+$('fAdd').onclick=()=>{let res;try{res=readForm();}catch(err){$('fError').textContent=err.message;$('fError').hidden=false;$('fError').scrollIntoView({block:'nearest'});return;}
+ const {r,e,newSrc,dup}=res;if(dup&&!window.confirm(`Aynı gün ve aynı adla ${dup.id} kaydı zaten var. Yine de eklensin mi?`))return;
+ drafts.olaylar.push(r);if(newSrc){drafts.kaynaklar[newSrc.id]={ad:newSrc.ad,url:newSrc.url};SOURCES[newSrc.id]={name:newSrc.ad,url:newSrc.url,taslak:true};}
+ const ok=saveDrafts();e.taslak=true;EVENTS.push(e);EVENTS.sort((a,b)=>a.jdn-b.jdn);
+ for(const id of ['fOlay','fKaynakTarih','fNot','fYeniKaynakAd','fYeniKaynakUrl','fYildonumu'])$(id).value='';document.querySelector('input[name="fYd"][value=""]').checked=true;$('fYildonumu').disabled=true;$('fError').hidden=true;
+ refreshAll();closeDrawer();setView('takvim');jumpTo(e.jdn,e.id);
+ toast(ok?`${r.olay} taslak olarak eklendi. Kalıcı olması için Taslaklar'dan olaylar.js dosyasını indir.`:`${r.olay} eklendi ama kaydedilemedi; pencereyi kapatmadan olaylar.js dosyasını indir.`);};
+function removeDraft(id){drafts.olaylar=drafts.olaylar.filter(r=>r.id!==id);const used=new Set(drafts.olaylar.flatMap(r=>r.kaynaklar||[]));for(const k of Object.keys(drafts.kaynaklar))if(!used.has(k)){delete drafts.kaynaklar[k];delete SOURCES[k];}const i=EVENTS.findIndex(e=>e.id===id&&e.taslak);if(i>=0)EVENTS.splice(i,1);saveDrafts();refreshAll();renderDrafts();}
+function renderDrafts(){const n=drafts.olaylar.length;$('fExport').disabled=!n;
+ $('draftIntro').textContent=n?`Bu ${n} olay şimdilik yalnızca bu bilgisayarın tarayıcısında. Kalıcı olması için olaylar.js dosyasını indir, İndirilenler klasöründen takvim klasörüne taşıyıp eskisinin yerine koy ve takvimi yenile (F5). Taslaklar o zaman kendiliğinden temizlenir.`:(draftInfo||'Taslak olay yok. Eklediğin olaylar, olaylar.js dosyasına geçene kadar burada durur.');
+ const box=$('draftList');box.innerHTML='';for(const r of drafts.olaylar){const e=EVENTS.find(x=>x.id===r.id&&x.taslak);const it=el('div','draft-item');it.append(el('h4',null,r.olay));it.append(el('p','ev-when',e?`${humanA(fromA(e.jdn))} (Sistem A), sınıf ${r.sinif}`:'geçersiz taslak'));
+  const row=el('div','row');if(e){const g=el('button','btn','Takvimde göster');g.onclick=()=>{closeDrawer();setView('takvim');jumpTo(e.jdn,e.id);};row.append(g);}const d=el('button','btn','Taslağı sil');d.onclick=()=>{if(window.confirm(`"${r.olay}" taslağı silinsin mi?`))removeDraft(r.id);};row.append(d);it.append(row);box.append(it);}}
+function buildDataFile(){const key=r=>{try{return validate(r,{...SOURCES},null).jdn;}catch(e){return Number.MAX_SAFE_INTEGER;}};
+ const all=[...RAW.olaylar,...drafts.olaylar].map((r,i)=>({r,k:key(r),i})).sort((a,b)=>a.k-b.k||a.i-b.i).map(x=>x.r);
+ const srcAll={...(RAW.kaynaklar||{}),...drafts.kaynaklar};const parts=[];const keys=Object.keys(RAW);for(const k of ['olaylar','kaynaklar'])if(!keys.includes(k))keys.push(k);
+ for(const k of keys){if(k==='olaylar')parts.push('"olaylar": [\n'+all.map(r=>JSON.stringify(r)).join(',\n')+'\n]');else if(k==='kaynaklar')parts.push('"kaynaklar": {\n'+Object.entries(srcAll).map(([c,v])=>JSON.stringify(c)+': '+JSON.stringify({ad:v.ad,url:v.url||''})).join(',\n')+'\n}');else parts.push(JSON.stringify(k)+': '+JSON.stringify(RAW[k]));}
+ return (dataHeader()+'window.TAKVIM_VERI = {\n'+parts.join(',\n')+'\n};\n').replace(/\r?\n/g,'\r\n');}
+$('fExport').onclick=()=>{if(!RAW)return;const text=buildDataFile();
+ try{const i=text.indexOf('\nwindow.TAKVIM_VERI'),j=text.indexOf('=',i)+1,k=text.lastIndexOf(';');const o=JSON.parse(text.slice(j,k));if(o.olaylar.length!==RAW.olaylar.length+drafts.olaylar.length)throw Error('kayıt sayısı tutmuyor');}catch(err){toast('Dosya üretilemedi: '+err.message);return;}
+ download('olaylar.js',text,'text/javascript;charset=utf-8');toast(`olaylar.js indirildi (${RAW.olaylar.length+drafts.olaylar.length} kayıt). Takvim klasöründeki eskisinin yerine koy, sonra F5.`);};
+function refreshAll(){fillFilters();renderMonth();renderDay();renderRibbon();renderBar();renderSources();if(view==='katalog')renderCatalog();}
+
+// ================================================================ başlangıç
+function refreshToday(){const t=localToday();if(t===todayJ)return;const was=selectedJ===todayJ;todayJ=t;if(was){selectedJ=viewJ=t;}renderBar();renderMonth();renderDay();renderRibbon();}
+setInterval(refreshToday,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday();});
+applyB();fillFilters();renderBar();renderSources();setConverterToday();renderMonth();renderDay();renderCatalog();renderRibbon();
+requestAnimationFrame(renderRibbon);
+// Sabit noktalar için öz-test (sorun olursa üstte uyarı çıkar)
+const check=(c,m)=>{if(!c){console.error('Takvim öz-testi başarısız:',m);problems.push('Öz-test başarısız: '+m);showProblems(false);}};
+check(jd(-762,6,15,'jul')===1442903,'Asur sabiti');check(jd(-167,6,22,'jul')===1660234,'Pidna');check(jd(1582,10,4,'jul')+1===jd(1582,10,15,'greg'),'1582 reformu');check(label(fromA(jd(1453,5,29,'jul')))==='29/05/2216','1453 A');check(label(fromB(jd(2026,11,15,'greg')))==='22/06/2789','2026 B');check(label(fromB(jd(2026,11,23,'greg')))==='02/07/2789','23 Kasım 2026 B');check(week(jd(2026,11,23,'greg'))===0,'23 Kasım 2026 Pazartesi');check(week(jd(2026,11,1,'greg'))===6,'1 Kasım 2026 Pazar');
+window.__takvim={jd,fromJD,fromA,fromB,label,EVENTS,anniversaries,problems,setView,openDrawer,get todayJ(){return todayJ;}};
+})();
+</script>
+</body></html>

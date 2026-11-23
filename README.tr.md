@@ -201,17 +201,18 @@ Hicrî günün günbatımında başlaması ve hilal tespiti gibi etkenler, bazı
 
 ## Günlük kullanım ve Windows
 
-**Windows V3.4 prototipi** şunları içerir:
+**Windows V3.6 prototipi** [`Bur_Sagale_Takvimi/`](Bur_Sagale_Takvimi/) klasöründedir ve şunları içerir:
 
 - Ana ekran olarak Sistem A aylık takvimi.
-- Gelişmiş ayarlarda Sistem B.
+- Ayarlarda isteğe bağlı Sistem B.
+- MÖ 763'ten bugüne uzanan, katalogdaki her olayı gösteren zaman çizgisi şeridi.
 - Jülyen/Gregoryen/Sistem A/Sistem B/JDN dönüştürücü.
 - Kaynaklı olay kataloğu ve güven filtreleri.
 - Tarayıcıda saklanan kişisel notlar, JSON yedekleme.
 - Olay ekleme formu, taslak kayıtlar ve güncellenmiş `olaylar.js` indirme.
 - Windows bildirim alanı için isteğe bağlı PowerShell aracı; tıklayınca Edge uygulama penceresi açılır.
 
-V3.4 paketinde ZIP'ten çıkardığın `Tarihsel_Takvim` klasöründe `Kur.cmd` çalıştırılarak kısayollar oluşturulabilir. Kaynak kodunu incelemek ve yalnızca güvenilen sürümleri çalıştırmak gerekir. Dosyalar kalıcı bir konumda tutulmalıdır. **Windows sistem tarihi, saati veya bölge ayarları değişmez.** Otomatik başlangıç ve günlük bildirimler varsayılan olarak kapalıdır.
+Depoyu **Code → Download ZIP** ile indirip içindeki `Bur_Sagale_Takvimi` klasörünü kalıcı bir yere çıkardıktan sonra `Kur.cmd` çalıştırılarak kısayollar oluşturulabilir. Kurulum istemeyenler `Bur_Sagale_Takvimi.html` dosyasını doğrudan tarayıcıda açabilir; ayrıntılar `KULLANIM.txt` dosyasındadır. Kaynak kodunu incelemek ve yalnızca güvenilen sürümleri çalıştırmak gerekir. Dosyalar kalıcı bir konumda tutulmalıdır. **Windows sistem tarihi, saati veya bölge ayarları değişmez.** Otomatik başlangıç ve günlük bildirimler varsayılan olarak kapalıdır.
 
 Kişisel notlar tarayıcı verisi içinde tutulduğundan **JSON yedeği almak** önemlidir. Yeni olaylar geçici taslak olarak eklenebilir; kalıcı hâle getirmek için üretilen `olaylar.js` dosyası eski dosyanın yerine geçirilir. Windows ortamındaki kurulum ve bildirim alanı davranışı, kararlı sürümden önce gerçek bilgisayarda sınanmalıdır.
 

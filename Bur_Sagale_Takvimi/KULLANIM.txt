@@ -1,0 +1,94 @@
+BUR SAGALE TAKVİMİ (Bur Sagale Calendar) · SÜRÜM 3.6 · WINDOWS PAKETİ
+23 Kasım 2026 (Sistem A: 23/11/2789)
+=====================================================================
+
+KURULUM
+1. GitHub sayfasında Code > Download ZIP ile depoyu indir.
+2. ZIP dosyasına sağ tıkla > Özellikler > altta "Engellemeyi kaldır"
+   kutusunu işaretle > Tamam. (İnternetten inen dosyalarda Windows
+   aksi hâlde Kur.cmd için uyarı verebilir.)
+3. ZIP'in içindeki Bur_Sagale_Takvimi klasörünü kalıcı bir yere çıkar,
+   örneğin Belgeler\Bur_Sagale_Takvimi.
+   Kurulumdan sonra klasörü taşırsan Kur.cmd'yi yeniden çalıştır.
+4. Kur.cmd'ye çift tıkla. Şunlar oluşur:
+   - Başlat menüsü > Bur Sagale Takvimi (takvim ve simge kısayolları)
+   - Masaüstünde "Bur Sagale Takvimi" kısayolu
+   - Görev çubuğunun sağında, bildirim alanında bugünün gününü
+     gösteren simge (gizli simgelerdeyse ^ okuna tıklayıp görev
+     çubuğuna sürükleyebilirsin)
+Kurmak istemezsen Bur_Sagale_Takvimi.html dosyasını doğrudan tarayıcıda
+da açabilirsin; olaylar.js aynı klasörde durmalı.
+
+ESKİ "TARİHSEL TAKVİM" PAKETİNDEN GEÇİŞ
+1. Görev çubuğu simgesine sağ tıkla > Çıkış.
+2. Yeni Bur_Sagale_Takvimi klasörünü ayrı bir yere çıkar.
+3. Eski klasördeki olaylar.js'e formdan olay eklediysen, onu yeni klasöre kopyala.
+4. Yeni klasörde Kaldir.cmd: eski ve yeni adlı kısayolları kaldırır.
+5. Yeni klasörde Kur.cmd: kısayolları yeni klasöre göre oluşturur.
+   Açılışta başlatmayı açmıştıysan simgenin menüsünden yeniden aç.
+Notların ve taslakların olduğu gibi kalır. Eski klasörü istediğinde kendin silebilirsin.
+
+GÖREV ÇUBUĞU SİMGESİ
+- Üzerine gelince: 23 Kasım 2789 · Pazartesi
+- Sol tık: takvim, adres çubuğu olmayan ayrı bir Edge penceresinde açılır.
+- Sağ tık menüsü:
+  Tarihte bugün ................ bugünün yıldönümlerini bildirim olarak gösterir
+  Her gün tarihte bugün bildirimi göster ... varsayılan KAPALI
+  Windows açılışında başlat .... varsayılan KAPALI; işaretlersen her açılışta gelir
+  Çıkış
+- Simge açılırken bir anlık siyah pencere görünebilir; bu normaldir.
+- Windows'un saatine, tarihine, bölge ayarlarına ya da başka hiçbir
+  uygulamanın takvimine dokunmaz.
+
+TAKVİM PENCERESİ
+- Üstte dört bölüm: Takvim, Katalog, Dönüştürücü, Yöntem ve ayarlar.
+- Lacivert şerit, MÖ 763'ten bugüne uzanan zaman çizgisidir. Her çizgi
+  katalogdaki bir olaydır; üzerine gelince adı görünür, tıklayınca o güne
+  gider. Şeridin boş bir yerine tıklarsan seçili günün o yıldaki karşılığına gider.
+- Klavye (takvimdeyken): ok tuşları gün değiştirir, PageUp/PageDown ay
+  değiştirir, T bugüne döner. Esc olay ekleme panelini kapatır.
+
+OLAY EKLEMEK
+  1. Sağ üstteki "Olay ekle" ya da gün panelindeki "Bu güne olay ekle".
+     Dönüştürücüdeki "Bu tarihle olay ekle" de tarihi hazır doldurur.
+  2. Tarihi yazınca Sistem A karşılığı ve haftanın günü hemen görünür.
+  3. "Taslak olarak ekle": olay takvimde kesik çizgili olarak görünür,
+     üst çubukta "taslak olay kaydedilmedi" uyarısı çıkar.
+  4. Uyarıya tıkla > "olaylar.js dosyasını indir". İndirilen dosyayı
+     takvim klasörüne taşı, eskisinin yerine koy, F5. Taslaklar kendiliğinden
+     temizlenir; görev çubuğu simgesi de yeni olayları görür.
+  Hicrî ya da Rumî bir tarihin Jülyen/Gregoryen karşılığını gün-ay-yıl
+  alanlarına, özgün ifadeyi "Belgedeki özgün tarih" alanına yaz. Hicrî
+  tarihlerde gün akşam başladığı için genellikle B±1 uygundur.
+- olaylar.js'i Not Defteri ile elle de düzenleyebilirsin; dosyanın başındaki
+  açıklama alanları anlatır. Yazım hatası olursa takvim üstte kırmızı bir
+  uyarıyla hangi kaydın neden reddedildiğini söyler.
+
+DÖNÜŞTÜRÜCÜ
+- 1582 öncesi bir Gregoryen ya da 1582 sonrası bir Jülyen tarih girersen
+  sarı bir açıklama çıkar. Örnek: 1 Ocak 1237 Jülyen = Sistem A 1 Ocak 2000,
+  ama 1 Ocak 1237 Gregoryen = Sistem A 25 Aralık 1999. İkisi de doğru;
+  1237'nin belgeleri Jülyen tarih kullanır.
+
+SİSTEM B VE DİĞER AYARLAR
+- "Yöntem ve ayarlar" bölümünde: Sistem B'yi göster, ay/gün adlarının dili,
+  notların yedeği (indir / yedekten yükle) ve kaynak dizini.
+
+YILDÖNÜMÜ KURALI
+- Varsayılan: olay, Sistem A ay/gün etiketinde anılır
+  (1582'ye kadar Jülyen, sonrasında Gregoryen etiket).
+  Örnek: Pidna 22 Haziran'da; Gregoryen karşılığı (19 Haziran) olay
+  kartında ayrıca gösterilir.
+- Bir olay için farklı gün istenirse "yildonumu": "GG.AA" yazılır.
+- 29 Şubat'ta anılan olaylar, 29 Şubat olmayan yıllarda 28 Şubat'ta görünür.
+- "kaynak_tarih" alanı belgenin kendi tarih ifadesini korur
+  (örn. Hicri, Rumi, Babil ayı ya da 1582 sonrası yerel Jülyen tarih).
+
+KİŞİSEL NOTLAR
+- Gün panelinin altındaki "Notun" alanı. Notlar tarayıcının yerel deposunda
+  durur; notu olan günlerde takvimde küçük mavi bir nokta görünür.
+- "Yöntem ve ayarlar" > "Notları indir" ile ara sıra yedek al.
+
+KALDIRMAK
+- Kaldir.cmd yalnızca bu aracın oluşturduğu kısayolları siler.
+  Takvim dosyaları ve notların yerinde kalır.

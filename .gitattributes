@@ -1,0 +1,3 @@
+# Windows betikleri bayt bayt korunur (CRLF satır sonu ve UTF-8 BOM gerekli)
+*.cmd -text
+*.ps1 -text
