@@ -13,6 +13,7 @@
 
 - [Purpose and philosophy](#purpose-and-philosophy)
 - [Why Bur-Sagale? Why 763 BCE?](#why-bur-sagale-why-763-bce)
+- [763 BCE and humanity's written cultural heritage](#763-bce-and-humanitys-written-cultural-heritage)
 - [What this epoch does—and does not—mean](#what-this-epoch-doesand-does-notmean)
 - [The two calendar systems](#the-two-calendar-systems)
   - [System A: Extended Julian–Gregorian](#system-a-extended-juliangregorian)
@@ -85,6 +86,71 @@ The **763 BCE correlation is established in mainstream scholarship**, but no rel
 If stronger earlier evidence is established, we should **expand the catalog**. We should **not silently renumber every year**: altering a published calendar epoch would require an explicit, versioned decision.
 
 **Important distinction:** In System A, **Year 1 starts on 1 January 763 BCE**, not on the eclipse itself. The **15 June** eclipse is the *historical reason for selecting that year*. System B instead begins on the actual eclipse day.
+
+## 763 BCE and humanity's written cultural heritage
+
+A second reason for choosing the Bur-Sagale epoch is **historical coverage**. The year 763 BCE is not the beginning of writing or civilization, but it brings a substantial period of surviving administrative, legal, scientific, literary and philosophical records into the positive year sequence. This consideration complements rather than replaces the astronomical evidence.
+
+### Comparing two equally long periods
+
+| Conventional chronology | System A | Calendar years |
+|---|---|---:|
+| 763–1 BCE | BS 1–763 | 763 |
+| 1–763 CE | BS 764–1526 | 763 |
+
+A study published in 2013 reports a Trismegistos database snapshot taken on **20 June 2012**, limited to published Greek, Demotic and Coptic papyri from Egypt. Its original century-sized bins yield the following comparison.
+
+| Period | Records |
+|---|---:|
+| 763–1 BCE | 9,934 |
+| 1–699 CE | 27,705 |
+| 700–799 CE (whole bin) | 1,809 |
+| 1–763 CE (lower–upper bound) | 27,705–29,514 |
+
+The second period has approximately **2.79–2.97 times** as many records in this sample. The 700–799 CE bin cannot be split at 763 from the published table, so only bounds are reported. This is a historical database snapshot, not a current census of all papyri, and excludes Arabic, Latin and other languages. Counts of 4,716 in the third-century BCE bin, 3,509 in the second-century BCE bin and 8,993 in the second-century CE bin also show that documentary density is not a linear function of time. Source: [*Studies in Ancient Oracles and Divination*, ed. Mika Kajava (2013), “Chronological distribution” table](https://www.academia.edu/2416149/Studies_in_Ancient_Oracles_and_Divination_edited_by_Mika_Kajava_Acta_Instituti_Romani_Finlandiae_40_Rome_2013_224_pp); [Trismegistos](https://www.trismegistos.org/).
+
+### Independent examples from Mesopotamia, Iran and the Mediterranean
+
+| Collection / study | Historical scope | Reported quantity |
+|---|---|---|
+| Library of Ashurbanipal / Nineveh collection | Mainly seventh century BCE | Approximately 32,000 cuneiform tablets and fragments |
+| Babylonian legal and administrative records | Especially 626–484 BCE (BS 138–280) | More than 50,000 texts |
+| Persepolis Fortification Archive | Late sixth to early fifth century BCE | Approximately 15,000–18,000 original documents represented by 20,000–25,000 tablets and fragments (portion at the Oriental Institute as of 2017) |
+| Greek and Latin inscriptions | Approximately 800 BCE–800 CE (extends beyond both comparison periods) | Estimated 600,000 surviving inscriptions |
+
+Sources: [ORACC / British Museum, Library of Ashurbanipal](https://oracc.museum.upenn.edu/asbp/whatisthelibrary/index.html); [Alstola et al., *Sources at the End of the Cuneiform Era* (2023)](https://www.researchgate.net/publication/370855350_Sources_at_the_end_of_the_cuneiform_era); [Encyclopaedia Iranica, *Persepolis Administrative Archives*](https://www.iranicaonline.org/articles/persepolis-admin-archive/); [*Inscriptions as data: digital epigraphy in macro-historical perspective*](https://journalofdigitalhistory.org/en/article/WBqfZzfi7nHK).
+
+Inscription production expanded during the early Roman Empire, approaching a peak in many series around the late second century CE. Babylonian archives exhibit a different regional pattern, with exceptional documentation in 626–484 BCE and major subsequent archival discontinuities. The earlier period's extraordinary richness in some regions is therefore compatible with higher counts for the later period in Egyptian and Roman datasets.
+
+**Counting caveat:** tablet fragments, original documents, database records, inscriptions, literary works and later manuscript copies are different units. Collections can overlap. Preservation, excavation, publication and dating methods influence counts. These numbers cannot be summed to establish a worldwide total or a global ratio between the two periods. Distinguish the date of composition from the date of a surviving copy.
+
+### The qualitative weight of these centuries
+
+The 763 years from 763 to 1 BCE are not merely a numerical extension. They encompass the Neo-Babylonian and Achaemenid empires, classical Greek thought, Rome's traditional foundation and Republican history, the Hellenistic world, Chinese philosophical schools and early imperial historiography, and the development of Indian philosophical and Buddhist textual traditions. Egypt, Iran, Mesopotamia, China, India and the Mediterranean have distinct patterns of preservation and transmission. The early CE centuries continue this sequence with imperial Rome, Late Antiquity, Christianity, Chinese dynasties and the beginnings of Islam.
+
+The following illustrative approximate dates of composition or compilation show the intellectual heritage covered by System A. They are not exact-day event-catalog entries; some works developed through lengthy oral and written transmission.
+
+| Work / intellectual heritage | Approximate conventional date | System A |
+|---|---|---|
+| Homer, Iliad (traditional dating) | c. 750 BCE | c. BS 14 |
+| Confucius, Analects (compilation) | 5th–3rd centuries BCE | BS 264–563 |
+| Herodotus, Histories | 5th century BCE | BS 264–363 |
+| Thucydides, History of the Peloponnesian War | Late 5th–early 4th century BCE | c. BS 350–380 |
+| Plato, Republic | 4th century BCE | BS 364–463 |
+| Aristotle, Politics | 4th century BCE | BS 364–463 |
+| Euclid, Elements | c. 300 BCE | c. BS 464 |
+| Polybius, Histories | 2nd century BCE | BS 564–663 |
+| Sima Qian, Records of the Grand Historian | Early 1st century BCE | c. BS 670s |
+| Caesar, Gallic War | 50s BCE | c. BS 705–714 |
+| Virgil, Aeneid | c. 19 BCE (his death) | c. BS 745 |
+
+### Temporal coverage is not documentary coverage
+
+Taking approximately 3300 BCE as an illustrative date for the emergence of writing and 2026 CE (BS 2789) as the comparison year, System A's positive years cover 2,789 of 5,326 inclusive calendar-year labels, approximately **52.4%**. The conventional positive CE sequence covers 2,026 years, approximately **38.0%**. Writing emerged at different times in different societies; 3300 BCE is only an approximate illustrative starting point. These proportions count year labels, not exact elapsed days, and **do not measure the percentage of documents, works or historical importance covered**.
+
+Much of Sumerian, Akkadian, Hittite, early Egyptian and Bronze Age history remains before BS 1. It can still be represented by nonpositive year labels; the project does not exclude it. The cultural significance of the positive sequence is a qualitative argument, not a measured worldwide share of surviving documentation.
+
+**Research priority:** develop comparable datasets from Trismegistos, ORACC, CDLI, EDH/EDCS and East and South Asian source catalogues, accounting for date ranges, languages, regions, document types, original texts versus copies, and duplicate records. Historical coverage and astronomical reliability should be evaluated together; this assessment does not change the existing epoch or calendar rules.
 
 ## What this epoch does—and does not—mean
 
