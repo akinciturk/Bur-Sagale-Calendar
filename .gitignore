@@ -1,0 +1,22 @@
+# Kullanıcıya özel veriler (uygulamanın kendi klasöründe oluşturabildikleri)
+ayarlar.json
+kisisel_takvim_notlarim*.json
+*notlar*.json
+
+# Kimlik bilgileri ve gizli anahtarlar
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+credentials*.json
+secrets*.json
+
+# Geçici ve sistem dosyaları
+*.tmp
+*.bak
+*.log
+~$*
+Thumbs.db
+Desktop.ini
+.DS_Store
