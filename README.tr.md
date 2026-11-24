@@ -75,6 +75,14 @@ Bu ayrım seçtiğimiz günün sağlamlığını azaltmaz. Daha eski ve eşit de
 
 **Önemli:** MÖ 763 tutulması takvimin başlangıç yılının **gerekçesidir**. **Sistem A**, tutulmanın gerçekleştiği 15 Haziran'da değil, o yılın **1 Ocak** gününde başlar. **Sistem B** ise doğrudan 15 Haziran'da başlar.
 
+### Astronomik belirsizlik ve MÖ 791 itirazı
+
+**Bir tutulmayı hesaplamak, antik bir gözlemle özdeşleştirmekten farklıdır.** NASA, **Dünya'nın dönüşündeki geçmiş belirsizliklerin (ΔT)** çok eski tutulmaların Dünya üzerindeki *görünürlük izlerini* belirsizleştirdiğini; tarihsel açıklamasında yaklaşık **MÖ 1500 öncesinin tutulma izlerinin güvenilir biçimde yerleştirilemeyeceğini** belirtiyor. Bu, **gezegenlerin yörünge hızlarının bilinmediği** veya tutulmaların hiç hesaplanamayacağı anlamına gelmez. Bkz. [NASA'nın açıklaması](https://eclipse.gsfc.nasa.gov/SEhelp/rotation.html) ve [ΔT belirsizliği](https://eclipse.gsfc.nasa.gov/SEcat5/uncertainty.html).
+
+Azınlık görüşü Bur-Sagale kaydını **15 Haziran MÖ 763 (BS 1)** yerine **24 Haziran MÖ 791 (BS −27)** tutulmasına bağlar. MÖ 791'de gerçek bir tutulma vardır, ancak Asur kronolojisinin **28 yıl kaydırılması**, bağımsız astronomik ve hükümdarlık kayıtlarıyla açıklanmalıdır. [Hermann Hunger (2008)](https://ucrisportal.univie.ac.at/de/publications/zur-datierung-der-neuassyrischen-eponymenliste/) **MÖ 731 Ay tutulması** ve **MÖ 679, 651 ve 649 Mars–Merkür kayıtlarını** eponim dizisiyle karşılaştırıp **MÖ 763** tarihini savunur. [Edmonds–Frahm (2026)](https://doi.org/10.1086/741239) **Asur Krallar Listesi'nin** eksikliğini tartışır, fakat yaklaşık MÖ 911'den itibaren kesintisiz eponim kronolojisini değiştirmez.
+
+**MÖ 763 eşleştirmesi ana akım Asurolojide yerleşiktir**; ancak bunu benimseyen tarihçilerin güvenilir bir kesin sayısı veya yüzdesi bulunmamaktadır. Kanıtların ayrıntısı, sınırlamaları ve kaynakçası için [Türkçe araştırma notuna](docs/epoch-evidence-and-uncertainty.tr.md) bakınız ([English](docs/epoch-evidence-and-uncertainty.md)). **Takvim başlangıcı ve mevcut hesap kuralları değiştirilmemiştir.**
+
 ## İki takvim sistemimiz
 
 İki sistemin de gösterdiği **fiziksel günler aynıdır**; farklılık günlere verdikleri tarih etiketleridir.
