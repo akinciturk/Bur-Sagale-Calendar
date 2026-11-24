@@ -70,6 +70,14 @@ We considered several alternatives:
 
 A particularly important research source is **Werner Nahm and Michael Roaf (eds.), *Eclipses, Volcanoes, and Eponyms* (2025)**. Its preface discusses competing interpretations of the earlier Mari eclipse, including 1838 and 1833 BCE. The book is part of the reason we have **not** treated an earlier candidate as equally secure without further source analysis. See the [publisher's record](https://www.peeters-leuven.be/detail.php?search_key=9789042957077) and [de Jong's related research](https://dare.uva.nl/id/f84694a6-a8f2-408f-a3dc-d5e1368523e7).
 
+### Astronomical uncertainty and the 791 BCE objection
+
+**Astronomy is not the same as the identification of an ancient observation.** NASA explains that uncertainty in the history of **Earth's rotation (ΔT)** increases the uncertainty of ancient eclipse *paths*; in its historical discussion, paths **before roughly 1500 BCE** cannot be reliably localized. This is **not** a claim that ancient planets' orbital speeds are unknowable, or that eclipses themselves cannot be calculated. See [NASA's explanation](https://eclipse.gsfc.nasa.gov/SEhelp/rotation.html) and [ΔT uncertainty models](https://eclipse.gsfc.nasa.gov/SEcat5/uncertainty.html).
+
+The minority suggestion that Bur-Sagale refers to **24 June 791 BCE (BS −27)** instead of **15 June 763 BCE (BS 1)** concerns a real alternative eclipse. But shifting the Assyrian chronology by 28 years must also account for **other ancient astronomical and regnal evidence**. [Hermann Hunger (2008)](https://ucrisportal.univie.ac.at/de/publications/zur-datierung-der-neuassyrischen-eponymenliste/) checks the eponym sequence against a **731 BCE lunar-eclipse record** and **679, 651 and 649 BCE Mars–Mercury records**, obtaining the traditional **763 BCE** date. [Edmonds & Frahm (2026)](https://doi.org/10.1086/741239) question the completeness of the **Assyrian King List**, but do not overturn the unbroken eponym chronology from about 911 BCE.
+
+The **763 BCE correlation is established in mainstream scholarship**, but no reliable headcount or percentage of historians supporting it has been established. For the full evidence, limits, and sources, read the [research note on the epoch's astronomical and historical reliability](docs/epoch-evidence-and-uncertainty.md) ([Türkçe](docs/epoch-evidence-and-uncertainty.tr.md)). **The epoch and calendar rules remain unchanged.**
+
 ### Our choice, precisely stated
 
 > **The eclipse of 15 June 763 BCE is the earliest securely anchored historical day identified and adopted by this project's research to date.** It is **not** a demonstrated global record for the earliest precisely dateable human event. Earlier events may be documented or newly identified, and research remains open.
